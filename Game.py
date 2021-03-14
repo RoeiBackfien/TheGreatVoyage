@@ -8,22 +8,22 @@ start_img = root + 'start.png'
 bill_img = root + 'bill.png'
 dragon_img = root + 'dragon.png'
 aatrox_img = root + 'aatrox.png'
-map_img = root + 'map.png'
+map_img = root + 's.png'
 
 
 class Game:
 
-    def __init__(self):
+    def __init__(self, id):
         self.width = 1700
         self.height = 900
         self.screen = None
         self.size = (self.width, self.height)
-        self.clock = py.time.Clock()
         self.ready = False
         self.characters = None
         self.buttons = [Button(100, 700), Button(600, 700), Button(1150, 700)]
-        self.tiles = []
+        self.tiles = [GoldTile(40, 200), ReverseTile(150, 200)]
         self.s = False
+        self.id = id
 
     def start(self):
         py.init()
@@ -62,6 +62,8 @@ class Game:
         img = py.image.load(map_img).convert()
         img.set_colorkey((255, 255, 255))
         self.screen.blit(img, (0, 0))
+        for tile in self.tiles:
+            tile.draw(self.screen)
         py.display.flip()
 
     def main_menu(self):
