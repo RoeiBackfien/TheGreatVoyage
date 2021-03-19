@@ -10,17 +10,9 @@ class Direction(Enum):
 
 
 class Player:
-    def __init__(self, character):
-        self.character = character
-        self.gold = 0
-        self.battles_won = 0
-        self.fate_masks = 0
-        self.medals = 0
-        self.currentTile = None
-        self.direction = Direction.NONE
-
     def __init__(self):
         self.character = None
+        self.play = False
         self.gold = 0
         self.battles_won = 0
         self.fate_masks = 0
@@ -28,10 +20,10 @@ class Player:
         self.currentTile = None
         self.direction = Direction.NONE
 
-    def update(self, tile):
-        if type(tile) == GoldTile:
+    def update(self):
+        if type(self.currentTile) == GoldTile:
             self.gold += 10
-        elif type(tile) == FateMaskTile:
+        elif type(self.currentTile) == FateMaskTile:
             num = random.randint(1, 7)
             if num < 3:
                 pass
@@ -40,19 +32,21 @@ class Player:
             else:
                 self.fate_masks += 1
             pass
-        elif type(tile) == FightTile:
+        elif type(self.currentTile) == FightTile:
             pass
-        elif type(tile) == LoseGoldTile:
+        elif type(self.currentTile) == LoseGoldTile:
             self.gold -= 10
-        elif type(tile) == StoryTile:
+        elif type(self.currentTile) == StoryTile:
             num = random.randint(1, 7)
-        elif type(tile) == FreezeTile:
+        elif type(self.currentTile) == FreezeTile:
             self.direction = Direction.NONE
-        elif type(tile) == AnotherTurnTile:
+        elif type(self.currentTile) == AnotherTurnTile:
             self.direction = Direction.FORWARD
-        elif type(tile) == ReverseTile:
+        elif type(self.currentTile) == ReverseTile:
             self.direction = Direction.BACKWARD
 
-    def move(self, times, tiles):
-        for i in range(times):
+    def play(self, tiles):
+        num = random.randint(1, 7)
+        for i in range(num):
             self.currentTile = tiles[self.currentTile + 1]
+        self.update()
