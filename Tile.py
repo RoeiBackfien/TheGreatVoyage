@@ -14,8 +14,15 @@ class Tile(ABC):
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius, 0)
 
+    @abstractmethod
+    def __str__(self):
+        return 'Tile'
+
 
 class GoldTile(Tile):
+    def __str__(self):
+        return 'GoldTile'
+
     def __init__(self, x, y):
         super().__init__(x, y)
         self.color = (255, 255, 0)
@@ -25,6 +32,9 @@ class GoldTile(Tile):
 
 
 class FightTile(Tile):
+    def __str__(self):
+        return 'FightTile'
+
     def __init__(self, x, y):
         super().__init__(x, y)
         self.color = (255, 250, 100)
@@ -34,6 +44,9 @@ class FightTile(Tile):
 
 
 class MedalTile(Tile):
+    def __str__(self):
+        return 'MedalTile'
+
     def __init__(self, x, y):
         super().__init__(x, y)
         self.color = (255, 250, 100)
@@ -43,6 +56,9 @@ class MedalTile(Tile):
 
 
 class FateMaskTile(Tile):
+    def __str__(self):
+        return 'FateMaskTile'
+
     def __init__(self, x, y):
         super().__init__(x, y)
         self.color = (0, 0, 0)
@@ -52,6 +68,9 @@ class FateMaskTile(Tile):
 
 
 class StoryTile(Tile):
+    def __str__(self):
+        return 'StoryTile'
+
     def __init__(self, x, y):
         super().__init__(x, y)
         self.color = (51, 255, 51)
@@ -61,6 +80,9 @@ class StoryTile(Tile):
 
 
 class LoseGoldTile(Tile):
+    def __str__(self):
+        return 'LoseGoldTile'
+
     def __init__(self, x, y):
         super().__init__(x, y)
         self.color = (204, 0, 0)
@@ -70,6 +92,9 @@ class LoseGoldTile(Tile):
 
 
 class AnotherTurnTile(Tile):
+    def __str__(self):
+        return 'AnotherTurnTile'
+
     def __init__(self, x, y):
         super().__init__(x, y)
         self.color = (51, 255, 51)
@@ -79,6 +104,9 @@ class AnotherTurnTile(Tile):
 
 
 class FreezeTile(Tile):
+    def __str__(self):
+        return 'FreezeTile'
+
     def __init__(self, x, y):
         super().__init__(x, y)
         self.color = (0, 255, 255)
@@ -88,6 +116,9 @@ class FreezeTile(Tile):
 
 
 class ReverseTile(Tile):
+    def __str__(self):
+        return 'ReverseTile'
+
     def __init__(self, x, y):
         super().__init__(x, y)
         self.color = (51, 255, 51)

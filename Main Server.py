@@ -2,8 +2,9 @@ import socket
 import threading
 import pickle
 from Game import Game
+import random
 
-IP = '192.168.1.10'
+IP = '192.168.1.2'
 PORT = 5555
 ADDR = (IP, PORT)
 
@@ -24,6 +25,7 @@ def handle_client(conn, addr, player_num, game):
             conn.sendall(pickle.dumps(game))
         except:
             break
+    game.players[player_num].connected = False
     print(addr, 'Disconnected From The Server')
     conn.close()
 
