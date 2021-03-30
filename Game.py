@@ -5,6 +5,7 @@ from Button import Button
 from Player import Player
 from Cube import Cube
 import time
+import random
 
 root = 'D:\School\\2020-21\Cyber\Ofir\Work\TheGreatVoyage\\Pictures\\'
 start_img = root + 'start.png'
@@ -12,6 +13,8 @@ bill_img = root + 'bill.png'
 dragon_img = root + 'dragon.png'
 aatrox_img = root + 'aatrox.png'
 small_aatrox_img = root + 'small aatrox.png'
+small_bill_img = root + 'small bill.png'
+small_dragon_img = root + 'small dragon.png'
 map_img = root + 's.png'
 
 
@@ -25,7 +28,12 @@ class Game:
         self.screen = None
         self.ready = False
         self.characters = None
-        self.buttons = [Button(100, 700), Button(600, 700), Button(1150, 700)]
+        self.characters_buttons = [Button(100, 700, 300, 100, (200, 150, 150), 'Choose'),
+                                   Button(600, 700, 300, 100, (200, 150, 150), 'Choose'),
+                                   Button(1150, 700, 300, 100, (200, 150, 150), 'Choose')]
+        self.roll_button = Button(30, 0, 200, 100, (200, 150, 150), 'Roll')
+        self.start_button = Button(600, 700, 300, 100, (200, 150, 150), 'Start')
+        # self.instructions_button = Button(600, 700, 300, 100, (200, 150, 150), 'Instructions')
         self.start_tiles = [GoldTile(50, 210), LoseGoldTile(150, 210)]
         self.first_split_1 = [FreezeTile(150, 320), ReverseTile(150, 420), GoldTile(150, 520), LoseGoldTile(250, 522),
                               FateMaskTile(360, 522), LoseGoldTile(470, 522)]
@@ -39,13 +47,14 @@ class Game:
         self.players = [Player(), Player()]
         self.cube = Cube()
         self.start_game = False
+        self.current_player_num = -1
 
-    def start(self):
+    def initialize(self):
         py.init()
         py.font.init()
         self.screen = py.display.set_mode(self.size)
         py.display.set_caption("Game")
-        self.characters = [Character(bill_img, 150, 400, 'bill'), Character(dragon_img, 400, 350, 'dragon'),
+        self.characters = [Character(small_bill_img, 150, 400, 'bill'), Character(small_dragon_img, 400, 350, 'dragon'),
                            Character(small_aatrox_img, 1100, 300, 'aatrox')]
 
     def is_players_connected(self):
@@ -55,9 +64,10 @@ class Game:
         return True
 
     def choose_character(self, event):
-        characters = {self.buttons[0].x: self.characters[0], self.buttons[1].x: self.characters[1],
-                      self.buttons[2].x: self.characters[2]}
-        for btn in self.buttons:
+        characters = {self.characters_buttons[0].x: self.characters[0],
+                      self.characters_buttons[1].x: self.characters[1],
+                      self.characters_buttons[2].x: self.characters[2]}
+        for btn in self.characters_buttons:
             if btn.clicked_on(event):
                 return characters[btn.x]
 
@@ -68,10 +78,24 @@ class Game:
         return True
 
     def main(self, player):
-        player.turn = True
-        x, y = player.play(self.tiles, 2)
+        num = random.randint(1, 2)  # generates a cube roll number
+        font = pygame.font.SysFont("comicsans", 60)
+        text = font.render(str(num), True, (0, 255, 255))
+        self.screen.blit(text, (500, 100))
+        py.display.flip()
+        x, y = player.play(self.tiles, num)
         self.move_character(player.character, x, y)
-        player.turn = False
+        player.update()
+
+    def player_turn(self, player_num_turn, current_player_num):
+        if player_num_turn == current_player_num:
+            t = 'Your Turn'
+        else:
+            t = 'Enemy Turn'
+        font = pygame.font.SysFont("comicsans", 60)
+        text = font.render(t, True, (0, 255, 255))
+        self.screen.blit(text, (300, 20))
+        py.display.flip()
 
     def move_character(self, character, des_x, des_y):
         x = character.x
@@ -114,7 +138,7 @@ class Game:
     def choose_menu(self):
         for character in self.characters:
             self.draw_character(character)
-        for button in self.buttons:
+        for button in self.characters_buttons:
             button.draw(self.screen)
         font = py.font.SysFont("comicsans", 60)
         text = font.render("Choose Your Champion", True, (0, 255, 255))
@@ -128,12 +152,14 @@ class Game:
         py.draw.rect(self.screen, (153, 76, 0), (0, 0, 1700, 100))
         for tile in self.tiles:
             tile.draw(self.screen)
+        self.roll_button.draw(self.screen)
         py.display.flip()
 
     def main_menu(self):
         self.reset_screen()
         img = py.image.load(start_img)
         self.screen.blit(img, (0, 0))
+        self.start_button.draw(self.screen)
         py.display.flip()
 
     def waiting_for_players_screen(self):

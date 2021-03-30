@@ -9,19 +9,28 @@ PORT = 5555
 ADDR = (IP, PORT)
 
 
+def generate_random_player_turn():
+    return random.randint(0, 1)
+
+
 def handle_client(conn, addr, player_num, game):
-    conn.send(f'You Are Player Number {player_num}'.encode())
+    game.players[player_num].num = player_num
+    conn.send(pickle.dumps(game.players[player_num]))
     while True:
         try:
             data = pickle.loads(conn.recv(2048))
             game.players[player_num] = data
+
+            if game.players[player_num].turn:
+                game.players[player_num].turn = False
+                game.players[abs(game.player_num - 1)].turn = True
+                game.current_player_num = game.players[abs(game.player_num - 1)]
 
             if player_num == 1:
                 game.ready = True
 
             if not data:
                 break
-
             conn.sendall(pickle.dumps(game))
         except:
             break
@@ -45,6 +54,8 @@ def main():
             currentPlayer = 0
         conn, addr = s.accept()
         print(addr, 'Is Connected To The Server')
+        player_turn = generate_random_player_turn()
+        game.current_player_num = player_turn
         threading.Thread(target=handle_client, args=(conn, addr, currentPlayer, game)).start()
         currentPlayer += 1
 

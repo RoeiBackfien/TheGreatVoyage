@@ -17,9 +17,10 @@ class Player:
         self.fate_masks = 0
         self.medals = 0
         self.currentTile = None
-        self.direction = Direction.NONE
+        self.direction = Direction.FORWARD
         self.connected = False
         self.turn = False
+        self.num = -1
 
     def update(self):
         if type(self.currentTile) == GoldTile:
@@ -54,9 +55,10 @@ class Player:
                 for i in range(len(tiles)):
                     if tiles[i] == self.currentTile:
                         index = i
-                for j in range(num):
-                    self.currentTile = tiles[index + 1]
-                self.update()
+                if self.direction == Direction.FORWARD:
+                    self.currentTile = tiles[index + num]
+                elif self.direction == Direction.BACKWARD:
+                    self.currentTile = tiles[index - num]
                 return self.currentTile.x, self.currentTile.y
             except Exception as e:
                 print(e)
