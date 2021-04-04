@@ -8,10 +8,10 @@ class Network:
         self.server = '192.168.1.2'
         self.port = 5555
         self.addr = (self.server, self.port)
-        self.p = self.connect()
+        self.game = self.connect()
 
-    def get_p(self):
-        return self.p
+    def get_game(self):
+        return self.game
 
     def connect(self):
         try:
@@ -23,7 +23,7 @@ class Network:
     def send_str(self, data):
         try:
             self.client.send(data.encode())
-            return self.client.recv(2048)
+            return pickle.loads(self.client.recv(2048))
         except socket.error as e:
             print(e)
 

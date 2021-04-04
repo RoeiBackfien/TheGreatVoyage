@@ -44,7 +44,6 @@ class Game:
         self.end_tiles = [FreezeTile(1400, 320), GoldTile(1500, 320), ReverseTile(1600, 320)]
         self.tiles = self.start_tiles + self.first_split_1 + self.first_split_2 \
                      + self.mid_tiles + self.second_split_1 + self.second_split_2 + self.end_tiles
-        self.players = [Player(), Player()]
         self.cube = Cube()
         self.start_game = False
         self.current_player_num = -1
@@ -57,12 +56,6 @@ class Game:
         self.characters = [Character(small_bill_img, 150, 400, 'bill'), Character(small_dragon_img, 400, 350, 'dragon'),
                            Character(small_aatrox_img, 1100, 300, 'aatrox')]
 
-    def is_players_connected(self):
-        for p in self.players:
-            if p.connected is False:
-                return False
-        return True
-
     def choose_character(self, event):
         characters = {self.characters_buttons[0].x: self.characters[0],
                       self.characters_buttons[1].x: self.characters[1],
@@ -71,11 +64,7 @@ class Game:
             if btn.clicked_on(event):
                 return characters[btn.x]
 
-    def players_ready(self):
-        for p in self.players:
-            if p.character is None:
-                return False
-        return True
+
 
     def main(self, player):
         num = random.randint(1, 2)  # generates a cube roll number
