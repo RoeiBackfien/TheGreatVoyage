@@ -22,8 +22,8 @@ def main():
     game = net.get_game()
     game.initialize()
     my_p = net.send_str('get')
-    player_num = my_p.num
-    print(f'You Are Player Number {player_num}')
+    my_p_num = my_p.num
+    print(f'You Are Player Number {my_p_num}')
     run = True
     did_not_start = True
     first_click = False
@@ -46,7 +46,6 @@ def main():
                 elif game.ready and did_not_start:
                     did_not_start = False
                     game.main_menu()
-                    print("start")
 
                 elif game.ready and game.start_button.clicked_on(event) \
                         and not players_ready(my_p, other_p) is None and not first_click:
@@ -59,24 +58,36 @@ def main():
                 elif game.ready and my_p.character is not None and first_click \
                         and other_p.character is None and is_players_connected(my_p, other_p):
                     game.waiting_for_players_screen()
-                elif game.ready and players_ready(my_p, other_p) and not game.start_game and is_players_connected(my_p, other_p):
+                elif game.ready and players_ready(my_p, other_p) and not game.start_game \
+                        and is_players_connected(my_p, other_p):
                     if not drawn:
                         game.reset_screen()
-                        game.reset_screen()
                         game.draw_field()
-                        game.player_turn(game.current_player_num, player_num)
-                    # for player in game.players:
-                    #    player.character.x = 50
-                    #    player.character.y = 210
-                    #    if not drawn:
-                    #        game.draw_character(player.character)
-                    #        player.currentTile = game.tiles[0]
+                        game.player_turn(game.current_player_num, my_p_num)
+                    for player in (my_p, other_p):
+                        player.character.x = 50
+                        player.character.y = 210
+                        if not drawn:
+                            game.draw_character(player.character)
+                            player.currentTile = game.tiles[0]
                     drawn = True
                     game.start_game = True
-                elif drawn and player_num == game.current_player_num:
-                    my_p.turn = True
-                    # if game.roll_button.clicked_on(event):
-                    #    game.main(game.players[game.current_player_num])
+                elif drawn:
+                    game.player_turn(game.current_player_num, my_p_num)
+                    if my_p_num == game.current_player_num:
+                        my_p.turn = True
+                        p = my_p
+                        p2 = other_p
+                    else:
+                        other_p.turn = True
+                        p = other_p
+                        p2 = my_p
+                    if game.roll_button.clicked_on(event) and my_p_num == game.current_player_num:
+                        game.main(p)
+                        if p.turn:
+                            p.turn = False
+                            p2.turn = True
+                            game.current_player_num = abs(p.num - 1)
         except Exception as e:
             print(e)
             break

@@ -26,6 +26,7 @@ class Game:
         self.height = 900
         self.size = (self.width, self.height)
         self.screen = None
+        self.font = None
         self.ready = False
         self.characters = None
         self.characters_buttons = [Button(100, 700, 300, 100, (200, 150, 150), 'Choose'),
@@ -33,7 +34,7 @@ class Game:
                                    Button(1150, 700, 300, 100, (200, 150, 150), 'Choose')]
         self.roll_button = Button(30, 0, 200, 100, (200, 150, 150), 'Roll')
         self.start_button = Button(600, 700, 300, 100, (200, 150, 150), 'Start')
-        # self.instructions_button = Button(600, 700, 300, 100, (200, 150, 150), 'Instructions')
+        self.instructions_button = Button(600, 700, 300, 100, (200, 150, 150), 'Instructions')
         self.start_tiles = [GoldTile(50, 210), LoseGoldTile(150, 210)]
         self.first_split_1 = [FreezeTile(150, 320), ReverseTile(150, 420), GoldTile(150, 520), LoseGoldTile(250, 522),
                               FateMaskTile(360, 522), LoseGoldTile(470, 522)]
@@ -47,10 +48,12 @@ class Game:
         self.cube = Cube()
         self.start_game = False
         self.current_player_num = -1
+        self.players = [Player(), Player()]
 
     def initialize(self):
         py.init()
         py.font.init()
+        self.font = pygame.font.SysFont("comicsans", 60)
         self.screen = py.display.set_mode(self.size)
         py.display.set_caption("Game")
         self.characters = [Character(small_bill_img, 150, 400, 'bill'), Character(small_dragon_img, 400, 350, 'dragon'),
@@ -64,13 +67,10 @@ class Game:
             if btn.clicked_on(event):
                 return characters[btn.x]
 
-
-
     def main(self, player):
         num = random.randint(1, 2)  # generates a cube roll number
-        font = pygame.font.SysFont("comicsans", 60)
-        text = font.render(str(num), True, (0, 255, 255))
-        self.screen.blit(text, (500, 100))
+        text = self.font.render(str(num), True, (0, 255, 255))
+        self.screen.blit(text, (400, 20))
         py.display.flip()
         x, y = player.play(self.tiles, num)
         self.move_character(player.character, x, y)
@@ -81,8 +81,7 @@ class Game:
             t = 'Your Turn'
         else:
             t = 'Enemy Turn'
-        font = pygame.font.SysFont("comicsans", 60)
-        text = font.render(t, True, (0, 255, 255))
+        text = self.font.render(t, True, (0, 255, 255))
         self.screen.blit(text, (300, 20))
         py.display.flip()
 
@@ -129,8 +128,7 @@ class Game:
             self.draw_character(character)
         for button in self.characters_buttons:
             button.draw(self.screen)
-        font = py.font.SysFont("comicsans", 60)
-        text = font.render("Choose Your Champion", True, (0, 255, 255))
+        text = self.font.render("Choose Your Champion", True, (0, 255, 255))
         self.screen.blit(text, (600, 100))
         py.display.flip()
 
@@ -153,7 +151,6 @@ class Game:
 
     def waiting_for_players_screen(self):
         self.reset_screen()
-        font = py.font.SysFont("comicsans", 60)
-        text = font.render("Waiting For Players...", True, (0, 255, 255))
+        text = self.font.render("Waiting For Players...", True, (0, 255, 255))
         self.screen.blit(text, (600, 100))
         py.display.flip()
