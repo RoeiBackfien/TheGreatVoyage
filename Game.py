@@ -15,7 +15,7 @@ aatrox_img = root + 'aatrox.png'
 small_aatrox_img = root + 'small aatrox.png'
 small_bill_img = root + 'small bill.png'
 small_dragon_img = root + 'small dragon.png'
-map_img = root + 's.png'
+map_img = root + 'map.png'
 
 
 class Game:
@@ -32,7 +32,6 @@ class Game:
         self.characters_buttons = [Button(100, 700, 300, 100, (200, 150, 150), 'Choose'),
                                    Button(600, 700, 300, 100, (200, 150, 150), 'Choose'),
                                    Button(1150, 700, 300, 100, (200, 150, 150), 'Choose')]
-        self.roll_button = Button(30, 0, 200, 100, (200, 150, 150), 'Roll')
         self.start_button = Button(600, 700, 300, 100, (200, 150, 150), 'Start')
         self.instructions_button = Button(600, 700, 300, 100, (200, 150, 150), 'Instructions')
         self.start_tiles = [GoldTile(50, 210), LoseGoldTile(150, 210)]
@@ -45,7 +44,7 @@ class Game:
         self.end_tiles = [FreezeTile(1400, 320), GoldTile(1500, 320), ReverseTile(1600, 320)]
         self.tiles = self.start_tiles + self.first_split_1 + self.first_split_2 \
                      + self.mid_tiles + self.second_split_1 + self.second_split_2 + self.end_tiles
-        self.cube = Cube()
+        self.cube = Cube(0, 0, (255, 50, 0))
         self.start_game = False
         self.current_player_num = -1
         self.players = [Player(), Player()]
@@ -67,16 +66,21 @@ class Game:
             if btn.clicked_on(event):
                 return characters[btn.x]
 
-    def main(self, player):
-        num = random.randint(1, 2)  # generates a cube roll number
-        text = self.font.render(str(num), True, (0, 255, 255))
-        self.screen.blit(text, (400, 20))
-        py.display.flip()
-        x, y = player.play(self.tiles, num)
-        self.move_character(player.character, x, y)
-        player.update()
+    def main(self, player, player2, num):
+        # text = self.font.render(str(num), True, (0, 255, 255))
+        # self.screen.blit(text, (400, 20))
+        # py.display.flip()
+        if player.turn:
+            p = player
+            p2 = player2
+        else:
+            p = player2
+            p2 = player
+        x, y = p.play(self.tiles, num)
+        self.move_character(p.character, x, y, p2.character)
+        p.update()
 
-    def player_turn(self, player_num_turn, current_player_num):
+    def disp_player_turn(self, player_num_turn, current_player_num):
         if player_num_turn == current_player_num:
             t = 'Your Turn'
         else:
@@ -85,7 +89,7 @@ class Game:
         self.screen.blit(text, (300, 20))
         py.display.flip()
 
-    def move_character(self, character, des_x, des_y):
+    def move_character(self, character, des_x, des_y, other_character):
         x = character.x
         y = character.y
         y_diff = (des_y - y) / 4
@@ -98,6 +102,7 @@ class Game:
                 character.x = x
                 character.y = y
                 self.draw_character(character)
+                self.draw_character(other_character)
                 time.sleep(1)
         elif x_diff == 0:
             while y != des_y:
@@ -105,6 +110,7 @@ class Game:
                 y += y_diff
                 character.y = y
                 self.draw_character(character)
+                self.draw_character(other_character)
                 time.sleep(1)
         elif y_diff == 0:
             while x != des_x:
@@ -112,6 +118,7 @@ class Game:
                 x += x_diff
                 character.x = x
                 self.draw_character(character)
+                self.draw_character(other_character)
                 time.sleep(1)
 
     def reset_screen(self):
@@ -139,7 +146,7 @@ class Game:
         py.draw.rect(self.screen, (153, 76, 0), (0, 0, 1700, 100))
         for tile in self.tiles:
             tile.draw(self.screen)
-        self.roll_button.draw(self.screen)
+        self.cube.draw(self.screen)
         py.display.flip()
 
     def main_menu(self):

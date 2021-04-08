@@ -1,12 +1,5 @@
 import random
 import pygame as py
-import time
-
-
-def rotate(img, angle):
-    rotated_surface = py.transform.rotozoom(img, angle, 1)
-    rotated_rect = rotated_surface.get_rect(center=(300, 300))
-    return rotated_surface, rotated_rect
 
 
 def clicked(event):
@@ -14,76 +7,103 @@ def clicked(event):
 
 
 class Cube:
-    root = 'D:\School\\2020-21\Cyber\Ofir\Work\TheGreatVoyage\\Pictures\\'
-    cube1 = root + 'cube1.png'
-    cube2 = root + 'cube2.png'
-    cube3 = root + 'cube3.png'
-    cube4 = root + 'cube4.png'
-    cube5 = root + 'cube5.png'
-    cube6 = root + 'cube6.png'
-
-    def __init__(self):
-        self.positions = [self.cube1, self.cube1, self.cube1, self.cube1, self.cube1, self.cube1]
-        self.transform = {1: self.cube1, 2: self.cube1, 3: self.cube1, 4: self.cube1, 5: self.cube1, 6: self.cube1}
-        self.should_keep_rolling = True
+    def __init__(self, x, y, color):
         self.angle = 0
+        self.speed = 9
+        self.x = x
+        self.y = y
+        self.color = color
+        self.rect = None
+        self.width_and_length = 100
+        self.num = random.randint(1, 6)
 
-    def start(self):
-        self.screen = py.display.set_mode((600, 600))
-        py.display.set_caption("Game")
-
-    # def roll_periodic(self):
-    #    for pos in self.positions:
-    #        self.screen.fill((100, 100, 100))
-    #        img = py.image.load(pos)
-    #        img_rotated, rotated_rect = rotate(img, self.angle)
-    #        img_rotated.set_colorkey((255, 255, 255))
-    #        self.screen.blit(img_rotated, rotated_rect)
-    #        py.display.flip()
-    #        self.clock.tick(60)
-    #        self.angle += 7
     def draw(self, screen):
-        img = py.image.load(self.positions[0])
-        img.set_colorkey((255, 255, 255))
-        screen.blit(img, (20, 50))
+        img = py.Surface((self.width_and_length, self.width_and_length))
+        img.set_colorkey((0, 0, 0))
+        img.fill(self.color)
+        screen.blit(img, (self.x, self.y))
+        self.draw_dots(screen, self.num)
         py.display.flip()
 
-    def roll_on_click(self):
-        num = 1  # random.randint(1, 6)
-        print(num)
-        desired_angle = 370
-        i = 1
-        while self.angle != desired_angle:  # does a full spin and gets to the pos
-            if i == 7:
-                i = 1
-            self.screen.fill((100, 100, 100))
-            img = py.image.load(self.transform[i])
-            img_rotated, rotated_rect = rotate(img, self.angle)
-            img_rotated.set_colorkey((255, 255, 255))
-            self.screen.blit(img_rotated, rotated_rect)
-            py.display.flip()
-            self.angle += 10
-            i += 1
-        for j in range(1, num + 1):
-            self.screen.fill((100, 100, 100))
-            img = py.image.load(self.transform[j])
-            img_rotated, rotated_rect = rotate(img, self.angle)
-            img_rotated.set_colorkey((255, 255, 255))
-            self.screen.blit(img_rotated, rotated_rect)
-            py.display.flip()
-            self.angle += 10 + (360 / num)
+    def clicked_on(self, event):
+        surface = py.Surface((self.width_and_length, self.width_and_length))
+        self.rect = surface.get_rect()
+        if event.type == py.MOUSEBUTTONDOWN and event.button == 1:
+            return self.rect.collidepoint(py.mouse.get_pos())
 
-    def temp(self, screen):
-        py.draw.rect(screen, (0, 100, 255), (20, 20, 80, 60))
+    def draw_dots(self, screen, i):
+        if i == 1:
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2, self.width_and_length / 2), 10, 0)
+        if i == 2:
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 - 25, self.width_and_length / 2), 10, 0)
+        if i == 3:
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2, self.width_and_length / 2), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2 + 25), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 - 25, self.width_and_length / 2 - 25), 10, 0)
+        if i == 4:
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2 + 20), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 - 25, self.width_and_length / 2 + 20), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2 - 20), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 - 25, self.width_and_length / 2 - 20), 10, 0)
+        if i == 5:
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2, self.width_and_length / 2), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2 + 20), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 - 25, self.width_and_length / 2 + 20), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2 - 20), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 - 25, self.width_and_length / 2 - 20), 10, 0)
+        if i == 6:
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 - 25, self.width_and_length / 2 + 30), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 - 25, self.width_and_length / 2), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 - 25, self.width_and_length / 2 - 30), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2 + 30), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2), 10, 0)
+            py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2 - 30), 10, 0)
+
+    def roll(self, screen):
         num = random.randint(1, 6)
-        font = py.font.SysFont("comicsans", 60)
-        text = font.render(str(num), True, (0, 255, 255))
-        screen.blit(text, (50, 30))
+        print(num)
+        surface = py.Surface((self.width_and_length, self.width_and_length))
+        self.rect = surface.get_rect()
+        surface.set_colorkey((0, 0, 0))
+        surface.fill(self.color)
+        image = surface.copy()
+        image.set_colorkey((0, 0, 0))
+        rect = image.get_rect()
+        rect.center = (self.width_and_length // 2, self.width_and_length // 2)
+        clock = py.time.Clock()
+        rot = 360
+        running = True
+        i = 0
+        p = 0
+        count = 0
+        while running:
+            clock.tick(60)
+            screen.fill((0, 0, 0))
+            for event in py.event.get():
+                if event.type == py.QUIT:
+                    running = False
+            old_center = rect.center
+            self.angle = (self.angle + self.speed) % rot
+            new_image = py.transform.rotate(surface, self.angle)
+            rect = new_image.get_rect()
+            rect.center = old_center
+            screen.blit(new_image, rect)
+            self.draw_dots(screen, i)
+            py.display.flip()
+            if i == 6:
+                i = 0
+            if self.angle == 0:
+                count += 1
+            if p == 3:
+                i += 1
+                p = 0
+            p += 1
+            if count == 2:
+                i = num
+                rot = 90
+            if count == 3:
+                running = False
+        self.speed = 9
+        self.num = num
         return num
-
-# py.init()
-# c = Cube()
-# c.start()
-# c.roll_on_click()
-# while True:
-#    pass

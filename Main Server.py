@@ -26,6 +26,12 @@ def handle_client(conn, addr, player_num, game):
             if not pickled_data:
                 break
             game.players[player_num] = pickled_data
+            if player_num == 1:
+                game.ready = True
+                p = game.players[0]
+            else:
+                p = game.players[1]
+            conn.send(pickle.dumps(p))
         except:
             try:
                 str_data = data.decode()
@@ -33,14 +39,10 @@ def handle_client(conn, addr, player_num, game):
                     break
                 elif str_data == 'get':
                     conn.send(pickle.dumps(game.players[player_num]))
+                elif str_data == 'n':
+                    pass
             except:
                 break
-        if player_num == 1:
-            game.ready = True
-            p = game.players[0]
-        else:
-            p = game.players[1]
-        conn.sendall(pickle.dumps(p))
 
     print(addr, 'Disconnected From The Server')
     game.players[player_num].connected = False

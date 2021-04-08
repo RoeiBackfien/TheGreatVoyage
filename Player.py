@@ -60,5 +60,5 @@ class Player:
                 elif self.direction == Direction.BACKWARD:
                     self.currentTile = tiles[index - num]
                 return self.currentTile.x, self.currentTile.y
-            except Exception as e:
-                print(e)
+            except:
+                pass

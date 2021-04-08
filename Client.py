@@ -1,5 +1,6 @@
 import pygame as py
 from Network import Network as Net
+import time
 
 REFRESH_RATE = 60
 
@@ -22,12 +23,12 @@ def main():
     game = net.get_game()
     game.initialize()
     my_p = net.send_str('get')
-    my_p_num = my_p.num
-    print(f'You Are Player Number {my_p_num}')
+    print(f'You Are Player Number {my_p.num}')
     run = True
     did_not_start = True
     first_click = False
     drawn = False
+    n = None
     while run:
         try:
             clock.tick(REFRESH_RATE)
@@ -63,7 +64,6 @@ def main():
                     if not drawn:
                         game.reset_screen()
                         game.draw_field()
-                        game.player_turn(game.current_player_num, my_p_num)
                     for player in (my_p, other_p):
                         player.character.x = 50
                         player.character.y = 210
@@ -73,8 +73,8 @@ def main():
                     drawn = True
                     game.start_game = True
                 elif drawn:
-                    game.player_turn(game.current_player_num, my_p_num)
-                    if my_p_num == game.current_player_num:
+                    game.disp_player_turn(game.current_player_num, my_p.num)
+                    if my_p.num == game.current_player_num:
                         my_p.turn = True
                         p = my_p
                         p2 = other_p
@@ -82,12 +82,21 @@ def main():
                         other_p.turn = True
                         p = other_p
                         p2 = my_p
-                    if game.roll_button.clicked_on(event) and my_p_num == game.current_player_num:
-                        game.main(p)
+                    if game.cube.clicked_on(event) and my_p.num == game.current_player_num:
+                        roll_num = game.cube.roll(game.screen)
+                        time.sleep(1)
+                        game.main(p, p2, roll_num)
                         if p.turn:
                             p.turn = False
                             p2.turn = True
                             game.current_player_num = abs(p.num - 1)
+                    # elif game.roll_button.clicked_on(event) and other_p.num == game.current_player_num and n is not None:
+                    #    game.main(p2, p, roll_num)
+                    #    if p.turn:
+                    #        p.turn = False
+                    #        p2.turn = True
+                    #        game.current_player_num = abs(p.num - 1)
+
         except Exception as e:
             print(e)
             break
