@@ -2,7 +2,7 @@ import pygame as py
 from Network import Network as Net
 import time
 
-REFRESH_RATE = 60
+REFRESH_RATE = 30
 
 
 def clicked(event):
@@ -28,7 +28,6 @@ def main():
     did_not_start = True
     first_click = False
     drawn = False
-    n = None
     while run:
         try:
             clock.tick(REFRESH_RATE)
@@ -83,13 +82,12 @@ def main():
                         p = other_p
                         p2 = my_p
                     if game.cube.clicked_on(event) and my_p.num == game.current_player_num:
-                        roll_num = game.cube.roll(game.screen)
-                        time.sleep(1)
+                        roll_num = game.cube.roll(game)
                         game.main(p, p2, roll_num)
                         if p.turn:
                             p.turn = False
                             p2.turn = True
-                            game.current_player_num = abs(p.num - 1)
+                        game.current_player_num = abs(p.num - 1)
                     # elif game.roll_button.clicked_on(event) and other_p.num == game.current_player_num and n is not None:
                     #    game.main(p2, p, roll_num)
                     #    if p.turn:

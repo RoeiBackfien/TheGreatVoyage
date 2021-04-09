@@ -67,17 +67,15 @@ class Game:
                 return characters[btn.x]
 
     def main(self, player, player2, num):
-        # text = self.font.render(str(num), True, (0, 255, 255))
-        # self.screen.blit(text, (400, 20))
-        # py.display.flip()
         if player.turn:
             p = player
             p2 = player2
         else:
             p = player2
             p2 = player
-        x, y = p.play(self.tiles, num)
-        self.move_character(p.character, x, y, p2.character)
+        for i in range(num):
+            x, y = p.play(self.tiles)
+            self.move_character(p.character, x, y, p2.character)
         p.update()
 
     def disp_player_turn(self, player_num_turn, current_player_num):
@@ -92,8 +90,8 @@ class Game:
     def move_character(self, character, des_x, des_y, other_character):
         x = character.x
         y = character.y
-        y_diff = (des_y - y) / 4
-        x_diff = (des_x - x) / 4
+        y_diff = (des_y - y) / 2
+        x_diff = (des_x - x) / 2
         if x_diff != 0 and y_diff != 0:
             while x != des_x and y != des_y:
                 self.draw_field()
@@ -103,7 +101,7 @@ class Game:
                 character.y = y
                 self.draw_character(character)
                 self.draw_character(other_character)
-                time.sleep(1)
+                time.sleep(0.4)
         elif x_diff == 0:
             while y != des_y:
                 self.draw_field()
@@ -111,7 +109,7 @@ class Game:
                 character.y = y
                 self.draw_character(character)
                 self.draw_character(other_character)
-                time.sleep(1)
+                time.sleep(0.4)
         elif y_diff == 0:
             while x != des_x:
                 self.draw_field()
@@ -119,7 +117,7 @@ class Game:
                 character.x = x
                 self.draw_character(character)
                 self.draw_character(other_character)
-                time.sleep(1)
+                time.sleep(0.4)
 
     def reset_screen(self):
         self.screen.fill((0, 0, 0))

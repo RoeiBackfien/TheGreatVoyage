@@ -2,7 +2,6 @@ import socket
 import threading
 import pickle
 from Game import Game
-from Player import Player
 import random
 
 IP = '192.168.1.2'

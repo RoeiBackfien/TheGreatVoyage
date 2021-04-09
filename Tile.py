@@ -31,18 +31,6 @@ class GoldTile(Tile):
         super(GoldTile, self).draw(screen)
 
 
-class FightTile(Tile):
-    def __str__(self):
-        return 'FightTile'
-
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        self.color = (255, 250, 100)
-
-    def draw(self, screen):
-        super(FightTile, self).draw(screen)
-
-
 class MedalTile(Tile):
     def __str__(self):
         return 'MedalTile'

@@ -48,7 +48,7 @@ class Player:
         elif type(self.currentTile) == ReverseTile:
             self.direction = Direction.BACKWARD
 
-    def play(self, tiles, num):
+    def play(self, tiles):
         if self.turn:
             try:
                 index = 0
@@ -56,9 +56,9 @@ class Player:
                     if tiles[i] == self.currentTile:
                         index = i
                 if self.direction == Direction.FORWARD:
-                    self.currentTile = tiles[index + num]
+                    self.currentTile = tiles[index + 1]
                 elif self.direction == Direction.BACKWARD:
-                    self.currentTile = tiles[index - num]
+                    self.currentTile = tiles[index - 1]
                 return self.currentTile.x, self.currentTile.y
             except:
                 pass

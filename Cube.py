@@ -60,7 +60,7 @@ class Cube:
             py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2), 10, 0)
             py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2 - 30), 10, 0)
 
-    def roll(self, screen):
+    def roll(self, game):
         num = random.randint(1, 6)
         print(num)
         surface = py.Surface((self.width_and_length, self.width_and_length))
@@ -79,7 +79,7 @@ class Cube:
         count = 0
         while running:
             clock.tick(60)
-            screen.fill((0, 0, 0))
+            game.screen.fill((0, 0, 0))
             for event in py.event.get():
                 if event.type == py.QUIT:
                     running = False
@@ -88,8 +88,8 @@ class Cube:
             new_image = py.transform.rotate(surface, self.angle)
             rect = new_image.get_rect()
             rect.center = old_center
-            screen.blit(new_image, rect)
-            self.draw_dots(screen, i)
+            game.screen.blit(new_image, rect)
+            self.draw_dots(game.screen, i)
             py.display.flip()
             if i == 6:
                 i = 0
