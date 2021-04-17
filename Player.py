@@ -34,8 +34,6 @@ class Player:
                 pass
             else:
                 self.fate_masks += 1
-        elif type(self.currentTile) == FightTile:
-            pass
         elif type(self.currentTile) == LoseGoldTile:
             self.gold -= 10
         elif type(self.currentTile) == StoryTile:
@@ -49,16 +47,15 @@ class Player:
             self.direction = Direction.BACKWARD
 
     def play(self, tiles):
-        if self.turn:
-            try:
-                index = 0
-                for i in range(len(tiles)):
-                    if tiles[i] == self.currentTile:
-                        index = i
-                if self.direction == Direction.FORWARD:
-                    self.currentTile = tiles[index + 1]
-                elif self.direction == Direction.BACKWARD:
-                    self.currentTile = tiles[index - 1]
-                return self.currentTile.x, self.currentTile.y
-            except:
-                pass
+        try:
+            index = 0
+            for i in range(len(tiles)):
+                if tiles[i] == self.currentTile:
+                    index = i
+            if self.direction == Direction.FORWARD:
+                self.currentTile = tiles[index + 1]
+            elif self.direction == Direction.BACKWARD:
+                self.currentTile = tiles[index - 1]
+            return self.currentTile.x, self.currentTile.y
+        except:
+            pass

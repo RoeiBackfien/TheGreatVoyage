@@ -56,12 +56,11 @@ def main():
     s.bind(ADDR)
     s.listen()
     print('Server Is Up')
-    player_turn = generate_random_player_turn()
     while True:
         if currentPlayer % 2 == 0:
             game = Game(game_id)
             game_id += 1
-            game.current_player_num = player_turn
+            game.current_player_num = generate_random_player_turn()
             currentPlayer = 0
         conn, addr = s.accept()
         print(addr, 'Is Connected To The Server')

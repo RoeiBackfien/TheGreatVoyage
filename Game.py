@@ -5,7 +5,6 @@ from Button import Button
 from Player import Player
 from Cube import Cube
 import time
-import random
 
 root = 'D:\School\\2020-21\Cyber\Ofir\Work\TheGreatVoyage\\Pictures\\'
 start_img = root + 'start.png'
@@ -73,6 +72,7 @@ class Game:
         else:
             p = player2
             p2 = player
+        print(num)
         for i in range(num):
             x, y = p.play(self.tiles)
             self.move_character(p.character, x, y, p2.character)
@@ -122,6 +122,12 @@ class Game:
     def reset_screen(self):
         self.screen.fill((0, 0, 0))
 
+    def is_players_connected(self):
+        return self.players[0].connected and self.players[1].connected
+
+    def players_ready(self):
+        return self.players[0].character is not None and self.players[1].character is not None
+
     def draw_character(self, character):
         img = py.image.load(character.img).convert()
         img.set_colorkey((255, 255, 255))
@@ -141,7 +147,7 @@ class Game:
         img = py.image.load(map_img).convert()
         img.set_colorkey((255, 255, 255))
         self.screen.blit(img, (0, 0))
-        py.draw.rect(self.screen, (153, 76, 0), (0, 0, 1700, 100))
+        py.draw.rect(self.screen, (153, 76, 0), (0, 0, 1700, 120))
         for tile in self.tiles:
             tile.draw(self.screen)
         self.cube.draw(self.screen)

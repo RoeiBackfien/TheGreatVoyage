@@ -1,20 +1,11 @@
 import pygame as py
 from Network import Network as Net
-import time
 
-REFRESH_RATE = 30
+REFRESH_RATE = 60
 
 
 def clicked(event):
     return event.type == py.MOUSEBUTTONDOWN and event.button == 1
-
-
-def is_players_connected(p1, p2):
-    return p1.connected and p2.connected
-
-
-def players_ready(p1, p2):
-    return p1.character is not None and p2.character is not None
 
 
 def main():
@@ -33,11 +24,13 @@ def main():
             clock.tick(REFRESH_RATE)
             for event in py.event.get():
                 other_p = net.send_obj(my_p)
+                game.players[my_p.num] = my_p
+                game.players[other_p.num] = other_p
 
                 if event.type == py.QUIT:
                     run = False
                     py.quit()
-                if is_players_connected(my_p, other_p):
+                if game.is_players_connected():
                     game.ready = True
 
                 if not game.ready:
@@ -48,22 +41,21 @@ def main():
                     game.main_menu()
 
                 elif game.ready and game.start_button.clicked_on(event) \
-                        and not players_ready(my_p, other_p) is None and not first_click:
+                        and not game.players_ready() is None and not first_click:
                     game.reset_screen()
                     game.choose_menu()
                     first_click = True
                 elif game.ready and clicked(event) and my_p.character is None and first_click \
-                        and is_players_connected(my_p, other_p):
+                        and game.is_players_connected():
                     my_p.character = game.choose_character(event)
                 elif game.ready and my_p.character is not None and first_click \
-                        and other_p.character is None and is_players_connected(my_p, other_p):
+                        and other_p.character is None and game.is_players_connected():
                     game.waiting_for_players_screen()
-                elif game.ready and players_ready(my_p, other_p) and not game.start_game \
-                        and is_players_connected(my_p, other_p):
+                elif game.ready and game.players_ready() and not game.start_game \
+                        and game.is_players_connected():
                     if not drawn:
-                        game.reset_screen()
                         game.draw_field()
-                    for player in (my_p, other_p):
+                    for player in game.players:
                         player.character.x = 50
                         player.character.y = 210
                         if not drawn:
@@ -88,7 +80,7 @@ def main():
                             p.turn = False
                             p2.turn = True
                         game.current_player_num = abs(p.num - 1)
-                    # elif game.roll_button.clicked_on(event) and other_p.num == game.current_player_num and n is not None:
+                    # elif game.roll_button.clicked_on(event) and other_p.num == game.current_player_num:
                     #    game.main(p2, p, roll_num)
                     #    if p.turn:
                     #        p.turn = False

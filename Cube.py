@@ -65,10 +65,10 @@ class Cube:
         print(num)
         surface = py.Surface((self.width_and_length, self.width_and_length))
         self.rect = surface.get_rect()
-        surface.set_colorkey((0, 0, 0))
+        surface.set_colorkey((153, 76, 0))
         surface.fill(self.color)
         image = surface.copy()
-        image.set_colorkey((0, 0, 0))
+        image.set_colorkey((153, 76, 0))
         rect = image.get_rect()
         rect.center = (self.width_and_length // 2, self.width_and_length // 2)
         clock = py.time.Clock()
@@ -79,10 +79,10 @@ class Cube:
         count = 0
         while running:
             clock.tick(60)
-            game.screen.fill((0, 0, 0))
             for event in py.event.get():
                 if event.type == py.QUIT:
                     running = False
+            py.draw.rect(game.screen, (153, 76, 0), (0, 0, 1700, 120))
             old_center = rect.center
             self.angle = (self.angle + self.speed) % rot
             new_image = py.transform.rotate(surface, self.angle)
