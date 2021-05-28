@@ -1,5 +1,4 @@
 from Tile import *
-import random
 from enum import Enum
 
 
@@ -13,8 +12,6 @@ class Player:
     def __init__(self):
         self.character = None
         self.gold = 0
-        self.battles_won = 0
-        self.fate_masks = 0
         self.medals = 0
         self.currentTile = None
         self.direction = Direction.FORWARD
@@ -25,22 +22,12 @@ class Player:
     def update(self):
         if type(self.currentTile) == GoldTile:
             self.gold += 10
-        elif type(self.currentTile) == FateMaskTile:
-            num = random.randint(1, 6)
-            # num = cube.temp(screen)
-            if num < 3:
-                pass
-            elif num == 3:
-                pass
-            else:
-                self.fate_masks += 1
         elif type(self.currentTile) == LoseGoldTile:
             self.gold -= 10
-        elif type(self.currentTile) == StoryTile:
-            # num = random.randint(1, 6)
-            pass
         elif type(self.currentTile) == FreezeTile:
             self.direction = Direction.NONE
+        elif type(self.currentTile) == MedalTile:
+            self.medals += 1
         elif type(self.currentTile) == AnotherTurnTile:
             self.direction = Direction.FORWARD
         elif type(self.currentTile) == ReverseTile:
@@ -56,6 +43,7 @@ class Player:
                 self.currentTile = tiles[index + 1]
             elif self.direction == Direction.BACKWARD:
                 self.currentTile = tiles[index - 1]
+                self.direction = Direction.FORWARD
             return self.currentTile.x, self.currentTile.y
         except:
             pass

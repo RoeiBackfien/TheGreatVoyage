@@ -1,6 +1,3 @@
-import pygame as py
-
-
 class Character:
     def __init__(self, img, x, y, name):
         self.name = name

@@ -7,14 +7,17 @@ from Cube import Cube
 import time
 
 root = 'D:\School\\2020-21\Cyber\Ofir\Work\TheGreatVoyage\\Pictures\\'
-start_img = root + 'start.png'
-bill_img = root + 'bill.png'
-dragon_img = root + 'dragon.png'
-aatrox_img = root + 'aatrox.png'
-small_aatrox_img = root + 'small aatrox.png'
-small_bill_img = root + 'small bill.png'
-small_dragon_img = root + 'small dragon.png'
-map_img = root + 'map.png'
+end = '.png'
+start_img = root + 'start' + end
+bill_img = root + 'bill' + end
+dragon_img = root + 'dragon' + end
+aatrox_img = root + 'aatrox' + end
+small_aatrox_img = root + 'small aatrox' + end
+small_bill_img = root + 'small bill' + end
+small_dragon_img = root + 'small dragon' + end
+map_img = root + 'map' + end
+gold_img = root + 'gold' + end
+medal_img = root + 'medal' + end
 
 
 class Game:
@@ -35,12 +38,20 @@ class Game:
         self.instructions_button = Button(600, 700, 300, 100, (200, 150, 150), 'Instructions')
         self.start_tiles = [GoldTile(50, 210), LoseGoldTile(150, 210)]
         self.first_split_1 = [FreezeTile(150, 320), ReverseTile(150, 420), GoldTile(150, 520), LoseGoldTile(250, 522),
-                              FateMaskTile(360, 522), LoseGoldTile(470, 522)]
-        self.first_split_2 = [GoldTile(250, 210), FreezeTile(330, 270), FateMaskTile(420, 335), LoseGoldTile(510, 410)]
+                              ReverseTile(360, 522), LoseGoldTile(470, 522)]
+        self.first_split_2 = [GoldTile(250, 210), FreezeTile(330, 270), AnotherTurnTile(420, 335),
+                              LoseGoldTile(510, 410)]
         self.mid_tiles = [ReverseTile(570, 522), LoseGoldTile(680, 522), FreezeTile(780, 522)]
-        self.second_split_1 = []
-        self.second_split_2 = []
-        self.end_tiles = [FreezeTile(1400, 320), GoldTile(1500, 320), ReverseTile(1600, 320)]
+        self.second_split_1 = [GoldTile(720, 610), LoseGoldTile(640, 650), FreezeTile(550, 660), LoseGoldTile(450, 660),
+                               GoldTile(350, 660), LoseGoldTile(250, 660), ReverseTile(160, 700), GoldTile(170, 790),
+                               FreezeTile(270, 810), LoseGoldTile(370, 815), GoldTile(470, 815), ReverseTile(600, 815),
+                               GoldTile(700, 815), GoldTile(800, 815), MedalTile(900, 815), GoldTile(1000, 815),
+                               GoldTile(1100, 815), GoldTile(1200, 815), GoldTile(1300, 815), LoseGoldTile(1380, 740),
+                               LoseGoldTile(1380, 640), LoseGoldTile(1380, 540), LoseGoldTile(1380, 440)]
+        self.second_split_2 = [GoldTile(880, 522), LoseGoldTile(850, 440), FreezeTile(795, 370), GoldTile(750, 290),
+                               LoseGoldTile(710, 200), GoldTile(810, 180), FreezeTile(910, 180), ReverseTile(1100, 180),
+                               GoldTile(1200, 180), FreezeTile(1300, 180), ReverseTile(1380, 180), GoldTile(1380, 260)]
+        self.end_tiles = [FreezeTile(1380, 340), GoldTile(1480, 340), ReverseTile(1580, 340)]
         self.tiles = self.start_tiles + self.first_split_1 + self.first_split_2 \
                      + self.mid_tiles + self.second_split_1 + self.second_split_2 + self.end_tiles
         self.cube = Cube(0, 0, (255, 50, 0))
@@ -63,7 +74,7 @@ class Game:
                       self.characters_buttons[2].x: self.characters[2]}
         for btn in self.characters_buttons:
             if btn.clicked_on(event):
-                return characters[btn.x]
+                return True, characters[btn.x]
 
     def main(self, player, player2, num):
         if player.turn:
@@ -143,11 +154,26 @@ class Game:
         self.screen.blit(text, (600, 100))
         py.display.flip()
 
-    def draw_field(self):
+    def draw_field(self, player=None):
         img = py.image.load(map_img).convert()
         img.set_colorkey((255, 255, 255))
         self.screen.blit(img, (0, 0))
         py.draw.rect(self.screen, (153, 76, 0), (0, 0, 1700, 120))
+        if player is not None:
+            text = self.font.render(f" Player Number {player.num}", True, (0, 255, 255))
+            self.screen.blit(text, (600, 20))
+
+            img = py.image.load(gold_img).convert()
+            img.set_colorkey((255, 255, 255))
+            self.screen.blit(img, (200, 0))
+            text = self.font.render(f" - {player.gold}", True, (0, 255, 255))
+            self.screen.blit(text, (320, 20))
+
+            img = py.image.load(medal_img).convert()
+            img.set_colorkey((255, 255, 255))
+            self.screen.blit(img, (400, 0))
+            text = self.font.render(f" - {player.medals}", True, (0, 255, 255))
+            self.screen.blit(text, (520, 20))
         for tile in self.tiles:
             tile.draw(self.screen)
         self.cube.draw(self.screen)
@@ -164,4 +190,28 @@ class Game:
         self.reset_screen()
         text = self.font.render("Waiting For Players...", True, (0, 255, 255))
         self.screen.blit(text, (600, 100))
+        py.display.flip()
+
+    def checkWinningPlayer(self):
+        self.reset_screen()
+        gold_winner = self.players[0] if self.players[0].gold > self.players[1].gold else self.players[1]
+        medalWinner = self.players[0] if self.players[0].medals > self.players[1].medals \
+            else self.players[1]
+        text = self.font.render(f"Winner Of Gold Is Player {gold_winner.num}"
+                                f" With {gold_winner.gold} Gold", True, (0, 255, 255))
+        self.screen.blit(text, (200, 20))
+        text = self.font.render(f"Winner Of Medals Is Player {medalWinner.num}"
+                                f" With {medalWinner.medals} Medals", True, (0, 255, 255))
+        self.screen.blit(text, (200, 60))
+        py.display.flip()
+        if gold_winner == self.players[0] and medalWinner == self.players[0]:
+            winner = self.players[0]
+        elif gold_winner == self.players[1] and medalWinner == self.players[0]:
+            winner = self.players[0]
+        else:
+            winner = self.players[1]
+        self.reset_screen()
+        time.sleep(2)
+        text = self.font.render(f"The Winner Is Player Number {winner.num}", True, (0, 255, 255))
+        self.screen.blit(text, (200, 60))
         py.display.flip()

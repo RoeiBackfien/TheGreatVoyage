@@ -60,9 +60,7 @@ class Cube:
             py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2), 10, 0)
             py.draw.circle(screen, (0, 0, 255), (self.width_and_length / 2 + 25, self.width_and_length / 2 - 30), 10, 0)
 
-    def roll(self, game):
-        num = random.randint(1, 6)
-        print(num)
+    def roll(self, game, num):
         surface = py.Surface((self.width_and_length, self.width_and_length))
         self.rect = surface.get_rect()
         surface.set_colorkey((153, 76, 0))

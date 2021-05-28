@@ -43,30 +43,6 @@ class MedalTile(Tile):
         super(MedalTile, self).draw(screen)
 
 
-class FateMaskTile(Tile):
-    def __str__(self):
-        return 'FateMaskTile'
-
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        self.color = (0, 0, 0)
-
-    def draw(self, screen):
-        super(FateMaskTile, self).draw(screen)
-
-
-class StoryTile(Tile):
-    def __str__(self):
-        return 'StoryTile'
-
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        self.color = (51, 255, 51)
-
-    def draw(self, screen):
-        super(StoryTile, self).draw(screen)
-
-
 class LoseGoldTile(Tile):
     def __str__(self):
         return 'LoseGoldTile'
