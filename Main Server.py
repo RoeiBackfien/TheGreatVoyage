@@ -26,7 +26,6 @@ def handle_client(conn, addr, player_num, game):
     first_click = False
     drawn = False
     clicked = ''
-    no = False
     while True:
         try:
             if player_num == 1:
@@ -45,9 +44,9 @@ def handle_client(conn, addr, player_num, game):
                     conn.send(pickle.dumps(game.players[player_num]))
                 elif str_data[2:] == 'clicked':
                     if str_data[:2]:
-                        clicked = "p0 clicked"
+                        clicked = "0 clicked"
                     else:
-                        clicked = "p1 clicked"
+                        clicked = "1 clicked"
                     print(clicked)
                 elif str_data[2:] == "clicked start button":
                     if str_data[:1] == '0':
@@ -67,10 +66,16 @@ def handle_client(conn, addr, player_num, game):
                     else:
                         clicked = "1 clicked on character"
                     print(clicked)
+                elif str_data[2:7] == 'chose':
+                    if str_data[:1] == '0':
+                        game.players[0].character = str_data[8:]
+                        print(f'0 chose {str_data[8:]}')
+                    else:
+                        game.players[1].character = str_data[8:]
+                        print(f'1 chose {str_data[8:]}')
             except:
                 pass
         my_p = game.players[player_num]
-        print(game.players[my_p.num].character)
         other_p = game.players[abs(player_num - 1)]
         try:
             if not game.ready:
@@ -84,17 +89,17 @@ def handle_client(conn, addr, player_num, game):
                     and not game.players_ready() is None and not first_click:
                 conn.send("reset screen choose menu".encode())
                 first_click = True
-            elif game.ready and clicked == f'{player_num} clicked on character'\
-                    and my_p.character is None and first_click and game.is_players_connected():
+            elif game.ready and my_p.character is None and first_click and game.is_players_connected():
                 conn.send("choose character".encode())
             elif game.ready and my_p.character is not None and first_click \
                     and other_p.character is None and game.is_players_connected():
                 conn.send("waiting for players screen".encode())
             elif game.ready and game.players_ready() and not game.start_game \
                     and game.is_players_connected():
+                print(game.players[0].character)
+                print(game.players[1].character)
                 if not drawn:
                     conn.send("not drawn".encode())
-
                 drawn = True
                 game.start_game = True
             elif drawn:

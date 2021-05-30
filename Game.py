@@ -139,6 +139,14 @@ class Game:
     def players_ready(self):
         return self.players[0].character is not None and self.players[1].character is not None
 
+    def start_characters(self):
+        for player in self.players:
+            print(player.character)
+            player.character.x = 50
+            player.character.y = 210
+            self.draw_character(player.character)
+            player.currentTile = self.tiles[0]
+
     def draw_character(self, character):
         img = py.image.load(character.img).convert()
         img.set_colorkey((255, 255, 255))
