@@ -71,11 +71,11 @@ def main():
                         game.start_characters()
                     elif to_do == "disp player turn":
                         game.disp_player_turn(game.current_player_num, my_p.num)
-                    elif "roll cube" in to_do:
-                        num = int(to_do[len(to_do) - 1:])
+                    elif to_do.split("|")[0] == "roll cube":
+                        num = int(to_do.split('|')[1])
                         game.cube.roll(game, num)
-                        p_num = int(to_do.split("|")[1].split("-")[0])
-                        p2_num = int(to_do.split("|")[1].split("-")[1])
+                        p_num = int(to_do.split("|")[2].split("-")[0])
+                        p2_num = int(to_do.split("|")[2].split("-")[1])
                         p = game.players[p_num]
                         p2 = game.players[p2_num]
                         game.main(p, p2, num)

@@ -108,18 +108,13 @@ def handle_client(conn, addr, player_num, game):
             elif drawn:
                 msg = "disp player turn"
                 if my_p.num == game.current_player_num:
-                    my_p.turn = True
                     p = my_p
                     p2 = other_p
                 else:
-                    other_p.turn = True
                     p = other_p
                     p2 = my_p
                 if clicked == f'{player_num} clicked on cube':
-                    msg = f"roll cube {generate_random_cube_roll()}|{p.num}-{p2.num}"
-                    if p.turn:
-                        p.turn = False
-                        p2.turn = True
+                    msg = f"roll cube|{generate_random_cube_roll()}|{p.num}-{p2.num}"
                     game.current_player_num = abs(p.num - 1)
             else:
                 if msg == '':
