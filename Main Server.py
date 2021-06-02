@@ -7,6 +7,7 @@ import random
 IP = '0.0.0.0'
 PORT = 5555
 ADDR = (IP, PORT)
+CONNECTIONS = []
 
 
 def generate_random_player_turn():
@@ -18,6 +19,7 @@ def generate_random_cube_roll():
 
 
 def handle_client(conn, addr, player_num, game):
+    global CONNECTIONS
     game.players[player_num].num = player_num
     game.players[player_num].connected = True
     conn.send(pickle.dumps(game))
@@ -26,6 +28,8 @@ def handle_client(conn, addr, player_num, game):
     first_click = False
     drawn = False
     clicked = ''
+    msg = ''
+    start = 0
     while True:
         try:
             if player_num == 1:
@@ -69,41 +73,40 @@ def handle_client(conn, addr, player_num, game):
                 elif str_data[2:7] == 'chose':
                     if str_data[:1] == '0':
                         game.players[0].character = str_data[8:]
-                        print(f'0 chose {str_data[8:]}')
                     else:
                         game.players[1].character = str_data[8:]
-                        print(f'1 chose {str_data[8:]}')
+                    msg = f'|{player_num} chose {str_data[8:]}|'
             except:
                 pass
         my_p = game.players[player_num]
         other_p = game.players[abs(player_num - 1)]
         try:
             if not game.ready:
-                conn.send("waiting for players screen".encode())
+                msg = "waiting for players screen"
 
             elif game.ready and did_not_start:
-                did_not_start = False
-                conn.sendall("main menu".encode())
+                if msg == '':
+                    did_not_start = False
+                    msg = "main menu"
 
-            elif game.ready and clicked == f'{player_num} clicked start button'  \
+            elif game.ready and clicked == f'{player_num} clicked start button' \
                     and not game.players_ready() is None and not first_click:
-                conn.send("reset screen choose menu".encode())
-                first_click = True
-            elif game.ready and my_p.character is None and first_click and game.is_players_connected():
-                conn.send("choose character".encode())
-            elif game.ready and my_p.character is not None and first_click \
-                    and other_p.character is None and game.is_players_connected():
-                conn.send("waiting for players screen".encode())
-            elif game.ready and game.players_ready() and not game.start_game \
-                    and game.is_players_connected():
-                print(game.players[0].character)
-                print(game.players[1].character)
-                if not drawn:
-                    conn.send("not drawn".encode())
+                if msg == '':
+                    msg = "reset screen choose menu"
+                    first_click = True
+            elif game.ready and my_p.character is None and first_click:
+                if msg == '':
+                    msg = "choose character"
+            elif game.ready and my_p.character is not None and first_click and other_p.character is None:
+                if msg == '':
+                    msg = "waiting for players screen"
+            elif game.ready and game.players_ready() and start != 2 and not drawn and msg == '':
+                msg = "not drawn"
                 drawn = True
-                game.start_game = True
+                start += 1
+
             elif drawn:
-                conn.send("disp player turn".encode())
+                msg = "disp player turn"
                 if my_p.num == game.current_player_num:
                     my_p.turn = True
                     p = my_p
@@ -113,13 +116,22 @@ def handle_client(conn, addr, player_num, game):
                     p = other_p
                     p2 = my_p
                 if clicked == f'{player_num} clicked on cube':
-                    conn.sendall(f"roll cube main {generate_random_cube_roll()}, {p.num}-{p2.num}".encode())
+                    msg = f"roll cube {generate_random_cube_roll()}|{p.num}-{p2.num}"
                     if p.turn:
                         p.turn = False
                         p2.turn = True
                     game.current_player_num = abs(p.num - 1)
             else:
-                conn.send('no'.encode())
+                if msg == '':
+                    msg = 'no'
+            if msg[:4] == 'roll' or msg[3:8] == 'chose':
+                for connection in CONNECTIONS:
+                    connection.send(msg.encode())
+                print(msg)
+            else:
+                conn.send(msg.encode())
+            msg = ''
+            clicked = ''
         except Exception as e:
             print(e)
             break
@@ -145,6 +157,7 @@ def main():
             currentPlayer = 0
         try:
             conn, addr = s.accept()
+            CONNECTIONS.append(conn)
             print(addr, 'Is Connected To The Server')
             threading.Thread(target=handle_client, args=(conn, addr, currentPlayer, game)).start()
             currentPlayer += 1

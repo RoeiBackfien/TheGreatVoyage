@@ -1,6 +1,7 @@
+import socket
+
 import pygame as py
 from Network import Network as Net
-import threading
 
 REFRESH_RATE = 60
 
@@ -41,46 +42,53 @@ def main():
                         pass
                 try:
                     to_do = net.recv_str()
-                except:
-                    break
-                if to_do == 'no':
-                    pass
-                elif to_do == "waiting for players screen":
-                    game.waiting_for_players_screen()
-                elif to_do == "main menu":
-                    game.main_menu()
-                    print(to_do)
-                elif to_do == "reset screen choose menu":
-                    print(to_do)
-                    game.reset_screen()
-                    game.choose_menu()
-                elif "choose character" in to_do:
-                    try:
-                        game.players[my_p.num].character = cha[1]
-                        msg = f'{my_p.num} chose {cha[1]}'
-                        print(msg)
-                        print(cha[1])
-                    except:
+                    if to_do == 'no':
                         pass
-                elif to_do == "disp player turn":
-                    game.disp_player_turn(game.current_player_num, my_p.num)
-                    print(to_do)
-                elif to_do.split(",")[0][:len(to_do) - 1] == "roll cube main":
-                    print(to_do)
-                    num = to_do[len(to_do) - 1:]
-                    game.cube.roll(game, num)
-                    p = game.players[to_do.split(",")[1].split("-")[0]]
-                    p2 = game.players[to_do.split(",")[1].split("-")[1]]
-                    game.main(p, p2, num)
-                elif to_do == "not drawn":
-                    print(to_do)
-                    game.draw_field()
-                    game.start_characters()
-                if msg == '':
-                    net.send_str('no')
-                else:
-                    net.send_str(msg)
-                msg = ''
+                    if to_do == "waiting for players screen":
+                        game.waiting_for_players_screen()
+                    if to_do == "main menu":
+                        game.main_menu()
+                    if to_do == "reset screen choose menu":
+                        game.reset_screen()
+                        game.choose_menu()
+                    if to_do == "choose character":
+                        try:
+                            game.players[my_p.num].character = cha[1]
+                            msg = f'{my_p.num} chose {cha[1]}'
+                        except:
+                            pass
+                    elif 'chose' in to_do:
+                        if to_do.split('|')[1][:1] == '0':
+                            name = to_do.split('|')[1][8:]
+                            game.players[0].character = game.get_character_by_name(name)
+                            print(f'0 chose {game.players[0].character}')
+                        else:
+                            name = to_do.split('|')[1][8:]
+                            game.players[1].character = game.get_character_by_name(name)
+                            print(f'1 chose {game.players[1].character}')
+                    if 'not drawn' in to_do:
+                        game.draw_field()
+                        game.start_characters()
+                    elif to_do == "disp player turn":
+                        game.disp_player_turn(game.current_player_num, my_p.num)
+                    elif "roll cube" in to_do:
+                        num = int(to_do[len(to_do) - 1:])
+                        game.cube.roll(game, num)
+                        p_num = int(to_do.split("|")[1].split("-")[0])
+                        p2_num = int(to_do.split("|")[1].split("-")[1])
+                        p = game.players[p_num]
+                        p2 = game.players[p2_num]
+                        game.main(p, p2, num)
+                    if msg == '':
+                        net.send_str('no')
+                    else:
+                        net.send_str(msg)
+                        # print(msg)
+                    msg = ''
+                except Exception as e:
+                    print(e)
+                    run = False
+                    break
 
         except Exception as e:
             print(e)

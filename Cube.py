@@ -104,4 +104,3 @@ class Cube:
                 running = False
         self.speed = 9
         self.num = num
-        return num

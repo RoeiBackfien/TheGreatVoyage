@@ -55,7 +55,6 @@ class Game:
         self.tiles = self.start_tiles + self.first_split_1 + self.first_split_2 \
                      + self.mid_tiles + self.second_split_1 + self.second_split_2 + self.end_tiles
         self.cube = Cube(0, 0, (255, 50, 0))
-        self.start_game = False
         self.current_player_num = -1
         self.players = [Player(), Player()]
 
@@ -162,6 +161,10 @@ class Game:
         self.screen.blit(text, (600, 100))
         py.display.flip()
 
+    def get_character_by_name(self, name):
+        for c in self.characters:
+            if c.name == name:
+                return c
     def draw_field(self, player=None):
         img = py.image.load(map_img).convert()
         img.set_colorkey((255, 255, 255))
