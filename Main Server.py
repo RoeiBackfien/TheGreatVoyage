@@ -78,7 +78,7 @@ def handle_client(conn, addr, player_num, game):
                     msg = f'|{player_num} chose {str_data[8:]}|'
             except:
                 pass
-        my_p = game.players[player_num]
+        current_p = game.players[player_num]
         other_p = game.players[abs(player_num - 1)]
         try:
             if not game.ready:
@@ -94,28 +94,21 @@ def handle_client(conn, addr, player_num, game):
                 if msg == '':
                     msg = "reset screen choose menu"
                     first_click = True
-            elif game.ready and my_p.character is None and first_click:
+            elif game.ready and current_p.character is None and first_click:
                 if msg == '':
                     msg = "choose character"
-            elif game.ready and my_p.character is not None and first_click and other_p.character is None:
+            elif game.ready and current_p.character is not None and first_click and other_p.character is None:
                 if msg == '':
                     msg = "waiting for players screen"
             elif game.ready and game.players_ready() and start != 2 and not drawn and msg == '':
-                msg = "not drawn"
+                msg = f"not drawn|{game.current_player_num}"
                 drawn = True
                 start += 1
 
-            elif drawn:
-                msg = "disp player turn"
-                if my_p.num == game.current_player_num:
-                    p = my_p
-                    p2 = other_p
-                else:
-                    p = other_p
-                    p2 = my_p
-                if clicked == f'{player_num} clicked on cube':
-                    msg = f"roll cube|{generate_random_cube_roll()}|{p.num}-{p2.num}"
-                    game.current_player_num = abs(p.num - 1)
+            elif drawn and clicked == f'{player_num} clicked on cube' and player_num == game.current_player_num:
+                game.current_player_num = abs(game.current_player_num - 1)
+                msg = f"|roll cube|{generate_random_cube_roll()}" \
+                      f"|{current_p.num}-{other_p.num}|{game.current_player_num}"
             else:
                 if msg == '':
                     msg = 'no'
@@ -138,7 +131,7 @@ def handle_client(conn, addr, player_num, game):
 
 def main():
     currentPlayer = 0
-    game_id = 0
+    game_id = 1
     game = None
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(ADDR)

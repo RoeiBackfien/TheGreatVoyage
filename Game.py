@@ -75,20 +75,10 @@ class Game:
             if btn.clicked_on(event):
                 return True, characters[btn.x]
 
-    def main(self, player, player2, num):
-        if player.turn:
-            p = player
-            p2 = player2
-        else:
-            p = player2
-            p2 = player
-        print(num)
-        for i in range(num):
-            x, y = p.play(self.tiles)
-            self.move_character(p.character, x, y, p2.character)
-        p.update()
+    def main(self, p, p2, num):
+        p.play(self, p2, self.tiles, num)
 
-    def disp_player_turn(self, player_num_turn, current_player_num):
+    def disp_player_turn(self, current_player_num, player_num_turn):
         if player_num_turn == current_player_num:
             t = 'Your Turn'
         else:
@@ -165,26 +155,32 @@ class Game:
         for c in self.characters:
             if c.name == name:
                 return c
-    def draw_field(self, player=None):
+
+    def disp_player(self, num):
+        py.draw.rect(self.screen, (153, 76, 0), (0, 0, 1700, 120))
+        self.cube.draw(self.screen)
+        player = self.players[num]
+        text = self.font.render(f" Player Number {player.num}", True, (0, 255, 255))
+        self.screen.blit(text, (600, 20))
+
+        img = py.image.load(gold_img).convert()
+        img.set_colorkey((255, 255, 255))
+        self.screen.blit(img, (200, 0))
+        text = self.font.render(f" - {player.gold}", True, (0, 255, 255))
+        self.screen.blit(text, (320, 20))
+
+        img = py.image.load(medal_img).convert()
+        img.set_colorkey((255, 255, 255))
+        self.screen.blit(img, (400, 0))
+        text = self.font.render(f" - {player.medals}", True, (0, 255, 255))
+        self.screen.blit(text, (520, 20))
+        py.display.flip()
+
+    def draw_field(self):
         img = py.image.load(map_img).convert()
         img.set_colorkey((255, 255, 255))
         self.screen.blit(img, (0, 0))
         py.draw.rect(self.screen, (153, 76, 0), (0, 0, 1700, 120))
-        if player is not None:
-            text = self.font.render(f" Player Number {player.num}", True, (0, 255, 255))
-            self.screen.blit(text, (600, 20))
-
-            img = py.image.load(gold_img).convert()
-            img.set_colorkey((255, 255, 255))
-            self.screen.blit(img, (200, 0))
-            text = self.font.render(f" - {player.gold}", True, (0, 255, 255))
-            self.screen.blit(text, (320, 20))
-
-            img = py.image.load(medal_img).convert()
-            img.set_colorkey((255, 255, 255))
-            self.screen.blit(img, (400, 0))
-            text = self.font.render(f" - {player.medals}", True, (0, 255, 255))
-            self.screen.blit(text, (520, 20))
         for tile in self.tiles:
             tile.draw(self.screen)
         self.cube.draw(self.screen)

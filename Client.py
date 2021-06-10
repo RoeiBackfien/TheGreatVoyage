@@ -1,5 +1,3 @@
-import socket
-
 import pygame as py
 from Network import Network as Net
 
@@ -69,21 +67,23 @@ def main():
                     if 'not drawn' in to_do:
                         game.draw_field()
                         game.start_characters()
-                    elif to_do == "disp player turn":
-                        game.disp_player_turn(game.current_player_num, my_p.num)
-                    elif to_do.split("|")[0] == "roll cube":
-                        num = int(to_do.split('|')[1])
+                        game.disp_player(int(to_do.split('|')[1]))
+                        print(int(to_do.split('|')[1]))
+                    elif "roll cube" in to_do:
+                        num = int(to_do.split('|')[2])
                         game.cube.roll(game, num)
-                        p_num = int(to_do.split("|")[2].split("-")[0])
-                        p2_num = int(to_do.split("|")[2].split("-")[1])
+                        p_num = int(to_do.split("|")[3].split("-")[0])
+                        p2_num = int(to_do.split("|")[3].split("-")[1])
                         p = game.players[p_num]
                         p2 = game.players[p2_num]
                         game.main(p, p2, num)
+                        p.update()
+                        game.disp_player(int(to_do.split('|')[4]))
+                        print(int(to_do.split('|')[4]))
                     if msg == '':
                         net.send_str('no')
                     else:
                         net.send_str(msg)
-                        # print(msg)
                     msg = ''
                 except Exception as e:
                     print(e)
