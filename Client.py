@@ -68,7 +68,6 @@ def main():
                         game.draw_field()
                         game.start_characters()
                         game.disp_player(int(to_do.split('|')[1]))
-                        print(int(to_do.split('|')[1]))
                     elif "roll cube" in to_do:
                         num = int(to_do.split('|')[2])
                         game.cube.roll(game, num)
@@ -79,7 +78,6 @@ def main():
                         game.main(p, p2, num)
                         p.update()
                         game.disp_player(int(to_do.split('|')[4]))
-                        print(int(to_do.split('|')[4]))
                     if msg == '':
                         net.send_str('no')
                     else:

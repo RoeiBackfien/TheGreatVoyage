@@ -112,7 +112,7 @@ def handle_client(conn, addr, player_num, game):
             else:
                 if msg == '':
                     msg = 'no'
-            if msg[:4] == 'roll' or msg[3:8] == 'chose':
+            if msg[:5] == '|roll' or msg[3:8] == 'chose':
                 for connection in CONNECTIONS:
                     connection.send(msg.encode())
                 print(msg)

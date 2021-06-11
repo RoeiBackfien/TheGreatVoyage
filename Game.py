@@ -90,8 +90,8 @@ class Game:
     def move_character(self, character, des_x, des_y, other_character):
         x = character.x
         y = character.y
-        y_diff = (des_y - y) / 2
-        x_diff = (des_x - x) / 2
+        y_diff = (des_y - y)
+        x_diff = (des_x - x)
         if x_diff != 0 and y_diff != 0:
             while x != des_x and y != des_y:
                 self.draw_field()

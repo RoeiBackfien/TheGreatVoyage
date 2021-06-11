@@ -38,13 +38,16 @@ class Player:
             for i in range(len(tiles)):
                 if tiles[i] == self.currentTile:
                     index = i
-            for i in range(num):
+                    break
+            for j in range(num):
                 if self.direction == Direction.FORWARD:
                     self.currentTile = tiles[index + 1]
+                    index += 1
                     game.move_character(self.character, self.currentTile.x, self.currentTile.y, p2.character)
                 elif self.direction == Direction.BACKWARD:
                     self.currentTile = tiles[index - 1]
-                else:
+                    game.move_character(self.character, self.currentTile.x, self.currentTile.y, p2.character)
+                else: # if Direction is None
                     break
             self.direction = Direction.FORWARD
         except:
