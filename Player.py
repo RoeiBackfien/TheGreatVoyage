@@ -40,6 +40,10 @@ class Player:
                     index = i
                     break
             for j in range(num):
+                if index == 1 or tiles[index].x == 780 and tiles[index].y == 522:
+                    print(tiles[index])
+                    # game.draw
+                    pass
                 if self.direction == Direction.FORWARD:
                     self.currentTile = tiles[index + 1]
                     index += 1
@@ -47,7 +51,7 @@ class Player:
                 elif self.direction == Direction.BACKWARD:
                     self.currentTile = tiles[index - 1]
                     game.move_character(self.character, self.currentTile.x, self.currentTile.y, p2.character)
-                else: # if Direction is None
+                else:  # if Direction is None
                     break
             self.direction = Direction.FORWARD
         except:
