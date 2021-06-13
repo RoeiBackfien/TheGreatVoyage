@@ -6,6 +6,7 @@ from Player import Player
 from Cube import Cube
 import time
 import os
+import random
 
 root = os.getcwd() + '\\Pictures\\'
 end = '.png'
@@ -30,7 +31,6 @@ class Game:
         self.screen = None
         self.font = None
         self.ready = False
-        self.characters = None
 
         self.characters_buttons = [Button(100, 700, 300, 100, (200, 150, 150), 'Choose'),
                                    Button(600, 700, 300, 100, (200, 150, 150), 'Choose'),
@@ -62,9 +62,7 @@ class Game:
 
         self.end_tiles = [FreezeTile(1380, 340), GoldTile(1480, 340), EndTile(1580, 340)]
 
-        self.tiles = self.start_tiles + self.first_split_1 + self.first_split_2 \
-                     + self.mid_tiles + self.second_split_1 + self.second_split_2 + self.end_tiles
-
+        # Paths
         self.first_first = self.start_tiles + self.first_split_1 \
                            + self.mid_tiles + self.second_split_1 + self.end_tiles
 
@@ -76,6 +74,8 @@ class Game:
 
         self.second_second = self.start_tiles + self.first_split_2 \
                              + self.mid_tiles + self.second_split_2 + self.end_tiles
+
+        self.paths = [self.first_first, self.first_second, self.second_first, self.second_second]
 
         self.cube = Cube(0, 0, (255, 50, 0))
         self.current_player_num = -1
@@ -99,7 +99,7 @@ class Game:
                 return True, characters[btn.x]
 
     def main(self, p, p2, num):
-        p.play(self, p2, self.tiles, num)
+        p.play(self, p2, num)
 
     def move_character(self, character, des_x, des_y, other_character):
         x = character.x
@@ -145,11 +145,10 @@ class Game:
 
     def start_characters(self):
         for player in self.players:
-            print(player.character)
             player.character.x = 50
             player.character.y = 210
             self.draw_character(player.character)
-            player.currentTile = self.tiles[0]
+            player.currentTile = player.path[0]
 
     def draw_character(self, character):
         rect = py.Surface((character.width, character.height))
@@ -199,22 +198,11 @@ class Game:
         self.screen.blit(img, (0, 0))
         py.draw.rect(self.screen, (153, 76, 0), (0, 0, 1700, 120))
 
-        for tile in self.tiles:
-            tile.draw(self.screen)
+        for path in self.paths:
+            for tile in path:
+                tile.draw(self.screen)
         self.cube.draw(self.screen)
         py.display.flip()
-
-    def draw_arrows(self, isFirst):
-        if isFirst:
-            py.draw.rect(self.screen, (255, 0, 0), (200, 30, 20, 50))
-            py.draw.polygon(self.screen, color=(255, 0, 0), points=[(190, 30), (210, 0), (230, 30)])
-            py.draw.rect(self.screen, (255, 0, 0), (200, 30, 20, 50))
-            py.draw.polygon(self.screen, color=(255, 0, 0), points=[(190, 30), (210, 0), (230, 30)])
-        else:
-            py.draw.rect(self.screen, (255, 0, 0), (200, 30, 20, 50))
-            py.draw.polygon(self.screen, color=(255, 0, 0), points=[(190, 30), (210, 0), (230, 30)])
-            py.draw.rect(self.screen, (255, 0, 0), (200, 30, 20, 50))
-            py.draw.polygon(self.screen, color=(255, 0, 0), points=[(190, 30), (210, 0), (230, 30)])
 
     def main_menu(self):
         self.reset_screen()

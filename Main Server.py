@@ -17,6 +17,8 @@ def generate_random_player_turn():
 def generate_random_cube_roll():
     return random.randint(1, 6)
 
+def generate_path_num():
+    return random.randint(0, 3)
 
 def handle_client(conn, addr, player_num, game, game_id):
     global CONNECTIONS
@@ -29,7 +31,6 @@ def handle_client(conn, addr, player_num, game, game_id):
     drawn = False
     clicked = ''
     msg = ''
-    start = 0
     while True:
         try:
             if player_num == 1:
@@ -51,25 +52,21 @@ def handle_client(conn, addr, player_num, game, game_id):
                         clicked = "0 clicked"
                     else:
                         clicked = "1 clicked"
-                    print(clicked)
                 elif str_data[2:] == "clicked start button":
                     if str_data[:1] == '0':
                         clicked = "0 clicked start button"
                     else:
                         clicked = "1 clicked start button"
-                    print(clicked)
                 elif str_data[2:] == "clicked on cube":
                     if str_data[:1] == '0':
                         clicked = "0 clicked on cube"
                     else:
                         clicked = "1 clicked on cube"
-                    print(clicked)
                 elif str_data[2:] == 'clicked on character':
                     if str_data[:1] == '0':
                         clicked = "0 clicked on character"
                     else:
                         clicked = "1 clicked on character"
-                    print(clicked)
                 elif str_data[2:7] == 'chose':
                     if str_data[:1] == '0':
                         game.players[0].character = str_data[8:]
@@ -100,10 +97,9 @@ def handle_client(conn, addr, player_num, game, game_id):
             elif game.ready and current_p.character is not None and first_click and other_p.character is None:
                 if msg == '':
                     msg = "waiting for players screen"
-            elif game.ready and game.players_ready() and start != 2 and not drawn and msg == '':
-                msg = f"not drawn|{game.current_player_num}"
+            elif game.ready and game.players_ready() and not drawn and msg == '':
+                msg = f"not drawn|{game.current_player_num}|{generate_path_num()}|{generate_path_num()}"
                 drawn = True
-                start += 1
 
             elif drawn and clicked == f'{player_num} clicked on cube' and player_num == game.current_player_num:
                 game.current_player_num = abs(game.current_player_num - 1)
@@ -112,16 +108,14 @@ def handle_client(conn, addr, player_num, game, game_id):
             else:
                 if msg == '':
                     msg = 'no'
-            if msg[:5] == '|roll' or msg[3:8] == 'chose':
+            if msg[:5] == '|roll' or msg[3:8] == 'chose' or msg[:9] == 'not drawn':
                 CONNECTIONS[game_id * 2].send(msg.encode())
                 CONNECTIONS[game_id * 2 + 1].send(msg.encode())
-                print(msg)
             else:
                 conn.send(msg.encode())
             msg = ''
             clicked = ''
-        except Exception as e:
-            print(e)
+        except:
             break
 
     print(addr, 'Disconnected From The Server')

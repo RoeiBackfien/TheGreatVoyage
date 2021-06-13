@@ -1,6 +1,5 @@
 from Tile import *
 from enum import Enum
-import pygame as py
 
 
 class Direction(Enum):
@@ -18,6 +17,10 @@ class Player:
         self.direction = Direction.FORWARD
         self.connected = False
         self.num = -1
+        self.path = None
+
+    def initialize_path(self, path):
+        self.path = path
 
     def update(self):
         if type(self.currentTile) == GoldTile:
@@ -33,26 +36,25 @@ class Player:
         elif type(self.currentTile) == ReverseTile:
             self.direction = Direction.BACKWARD
 
-    def play(self, game, p2, tiles, num):
+    def play(self, game, p2, num):
         try:
             index = 0
-            for i in range(len(tiles)):
-                if tiles[i] == self.currentTile:
+            for i in range(len(self.path)):
+                if self.path[i] == self.currentTile:
                     index = i
                     break
             for j in range(num):
-                if index == 1 or tiles[index].x == 780 and tiles[index].y == 522:
-                    print(tiles[index])
-                    pass
                 if self.direction == Direction.FORWARD:
-                    self.currentTile = tiles[index + 1]
+                    self.currentTile = self.path[index + 1]
+                    print(self.currentTile)
                     index += 1
                     game.move_character(self.character, self.currentTile.x, self.currentTile.y, p2.character)
                 elif self.direction == Direction.BACKWARD:
-                    self.currentTile = tiles[index - 1]
+                    self.currentTile = self.path[index - 1]
                     game.move_character(self.character, self.currentTile.x, self.currentTile.y, p2.character)
-                else:  # if Direction is None
+                elif self.direction == Direction.NONE:
                     break
             self.direction = Direction.FORWARD
-        except:
+        except Exception as e:
+            print(e)
             pass

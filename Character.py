@@ -1,5 +1,3 @@
-import pygame as py
-
 
 class Character:
     def __init__(self, x, y, name, color):

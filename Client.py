@@ -59,24 +59,33 @@ def main():
                         if to_do.split('|')[1][:1] == '0':
                             name = to_do.split('|')[1][8:]
                             game.players[0].character = game.get_character_by_name(name)
-                            print(f'0 chose {game.players[0].character}')
                         else:
                             name = to_do.split('|')[1][8:]
                             game.players[1].character = game.get_character_by_name(name)
-                            print(f'1 chose {game.players[1].character}')
                     if 'not drawn' in to_do:
                         game.draw_field()
+                        to_do = to_do.split("not drawn")[1]
+
+                        num = int(to_do.split('|')[2])
+                        num2 = int(to_do.split('|')[3])
+
+                        game.players[0].path = game.paths[num]
+                        game.players[1].path = game.paths[num2]
+
                         game.start_characters()
                         game.disp_player(int(to_do.split('|')[1]))
                     elif "roll cube" in to_do:
                         num = int(to_do.split('|')[2])
                         game.cube.roll(game, num)
+
                         p_num = int(to_do.split("|")[3].split("-")[0])
                         p2_num = int(to_do.split("|")[3].split("-")[1])
+
                         p = game.players[p_num]
                         p2 = game.players[p2_num]
                         game.main(p, p2, num)
                         p.update()
+
                         game.disp_player(int(to_do.split('|')[4]))
                     if msg == '':
                         net.send_str('no')
