@@ -10,15 +10,13 @@ import os
 root = os.getcwd() + '\\Pictures\\'
 end = '.png'
 start_img = root + 'start' + end
-bill_img = root + 'bill' + end
-dragon_img = root + 'dragon' + end
-aatrox_img = root + 'aatrox' + end
-small_aatrox_img = root + 'small aatrox' + end
-small_bill_img = root + 'small bill' + end
-small_dragon_img = root + 'small dragon' + end
 map_img = root + 'map' + end
 gold_img = root + 'gold' + end
 medal_img = root + 'medal' + end
+
+
+def clicked(event):
+    return event.type == py.MOUSEBUTTONDOWN and event.button == 1
 
 
 class Game:
@@ -41,7 +39,7 @@ class Game:
         self.start_button = Button(600, 700, 300, 100, (200, 150, 150), 'Start')
         self.instructions_button = Button(600, 700, 300, 100, (200, 150, 150), 'Instructions')
 
-        self.start_tiles = [GoldTile(50, 210), LoseGoldTile(150, 210)]
+        self.start_tiles = [StartTile(50, 210), GoldTile(150, 210)]
 
         self.first_split_1 = [FreezeTile(150, 320), ReverseTile(150, 420), GoldTile(150, 520), LoseGoldTile(250, 522),
                               ReverseTile(360, 522), LoseGoldTile(470, 522)]
@@ -49,7 +47,7 @@ class Game:
         self.first_split_2 = [GoldTile(250, 210), FreezeTile(330, 270), AnotherTurnTile(420, 335),
                               LoseGoldTile(510, 410)]
 
-        self.mid_tiles = [ReverseTile(570, 522), LoseGoldTile(680, 522), MedalTile(780, 522)]
+        self.mid_tiles = [GoldTile(570, 522), FreezeTile(680, 522), MedalTile(780, 522)]
 
         self.second_split_1 = [GoldTile(720, 610), LoseGoldTile(640, 650), FreezeTile(550, 660), LoseGoldTile(450, 660),
                                GoldTile(350, 660), LoseGoldTile(250, 660), ReverseTile(160, 700), GoldTile(170, 790),
@@ -62,26 +60,28 @@ class Game:
                                LoseGoldTile(710, 200), GoldTile(810, 180), FreezeTile(910, 180), ReverseTile(1100, 180),
                                GoldTile(1200, 180), FreezeTile(1300, 180), ReverseTile(1380, 180), GoldTile(1380, 260)]
 
-        self.end_tiles = [FreezeTile(1380, 340), GoldTile(1480, 340), ReverseTile(1580, 340)]
+        self.end_tiles = [FreezeTile(1380, 340), GoldTile(1480, 340), EndTile(1580, 340)]
 
         self.tiles = self.start_tiles + self.first_split_1 + self.first_split_2 \
                      + self.mid_tiles + self.second_split_1 + self.second_split_2 + self.end_tiles
 
         self.first_first = self.start_tiles + self.first_split_1 \
-                     + self.mid_tiles + self.second_split_1 + self.end_tiles
+                           + self.mid_tiles + self.second_split_1 + self.end_tiles
 
         self.first_second = self.start_tiles + self.first_split_1 \
-                     + self.mid_tiles + self.second_split_2 + self.end_tiles
+                            + self.mid_tiles + self.second_split_2 + self.end_tiles
 
         self.second_first = self.start_tiles + self.first_split_2 \
-                     + self.mid_tiles + self.second_split_1 + self.end_tiles
+                            + self.mid_tiles + self.second_split_1 + self.end_tiles
 
         self.second_second = self.start_tiles + self.first_split_2 \
-                     + self.mid_tiles + self.second_split_2 + self.end_tiles
+                             + self.mid_tiles + self.second_split_2 + self.end_tiles
 
         self.cube = Cube(0, 0, (255, 50, 0))
         self.current_player_num = -1
         self.players = [Player(), Player()]
+        self.characters = [Character(220, 400, 'bill', (255, 0, 0)), Character(765, 400, 'dragon', (0, 255, 0)),
+                           Character(1300, 400, 'aatrox', (0, 0, 255))]
 
     def initialize(self):
         py.init()
@@ -89,8 +89,6 @@ class Game:
         self.font = pygame.font.SysFont("comicsans", 60)
         self.screen = py.display.set_mode(self.size)
         py.display.set_caption("Game")
-        self.characters = [Character(small_bill_img, 150, 400, 'bill'), Character(small_dragon_img, 400, 350, 'dragon'),
-                           Character(small_aatrox_img, 1100, 300, 'aatrox')]
 
     def choose_character(self, event):
         characters = {self.characters_buttons[0].x: self.characters[0],
@@ -154,9 +152,9 @@ class Game:
             player.currentTile = self.tiles[0]
 
     def draw_character(self, character):
-        img = py.image.load(character.img).convert()
-        img.set_colorkey((255, 255, 255))
-        self.screen.blit(img, (character.x, character.y))
+        rect = py.Surface((character.width, character.height))
+        rect.fill(character.color)
+        self.screen.blit(rect, (character.x, character.y))
         py.display.flip()
 
     def choose_menu(self):
@@ -205,6 +203,18 @@ class Game:
             tile.draw(self.screen)
         self.cube.draw(self.screen)
         py.display.flip()
+
+    def draw_arrows(self, isFirst):
+        if isFirst:
+            py.draw.rect(self.screen, (255, 0, 0), (200, 30, 20, 50))
+            py.draw.polygon(self.screen, color=(255, 0, 0), points=[(190, 30), (210, 0), (230, 30)])
+            py.draw.rect(self.screen, (255, 0, 0), (200, 30, 20, 50))
+            py.draw.polygon(self.screen, color=(255, 0, 0), points=[(190, 30), (210, 0), (230, 30)])
+        else:
+            py.draw.rect(self.screen, (255, 0, 0), (200, 30, 20, 50))
+            py.draw.polygon(self.screen, color=(255, 0, 0), points=[(190, 30), (210, 0), (230, 30)])
+            py.draw.rect(self.screen, (255, 0, 0), (200, 30, 20, 50))
+            py.draw.polygon(self.screen, color=(255, 0, 0), points=[(190, 30), (210, 0), (230, 30)])
 
     def main_menu(self):
         self.reset_screen()

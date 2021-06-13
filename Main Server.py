@@ -18,7 +18,7 @@ def generate_random_cube_roll():
     return random.randint(1, 6)
 
 
-def handle_client(conn, addr, player_num, game):
+def handle_client(conn, addr, player_num, game, game_id):
     global CONNECTIONS
     game.players[player_num].num = player_num
     game.players[player_num].connected = True
@@ -113,8 +113,8 @@ def handle_client(conn, addr, player_num, game):
                 if msg == '':
                     msg = 'no'
             if msg[:5] == '|roll' or msg[3:8] == 'chose':
-                for connection in CONNECTIONS:
-                    connection.send(msg.encode())
+                CONNECTIONS[game_id * 2].send(msg.encode())
+                CONNECTIONS[game_id * 2 + 1].send(msg.encode())
                 print(msg)
             else:
                 conn.send(msg.encode())
@@ -131,7 +131,7 @@ def handle_client(conn, addr, player_num, game):
 
 def main():
     currentPlayer = 0
-    game_id = 1
+    game_id = -1
     game = None
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(ADDR)
@@ -139,15 +139,15 @@ def main():
     print('Server Is Up')
     while True:
         if currentPlayer % 2 == 0:
-            game = Game(game_id)
             game_id += 1
+            game = Game(game_id)
             game.current_player_num = generate_random_player_turn()
             currentPlayer = 0
         try:
             conn, addr = s.accept()
             CONNECTIONS.append(conn)
             print(addr, 'Is Connected To The Server')
-            threading.Thread(target=handle_client, args=(conn, addr, currentPlayer, game)).start()
+            threading.Thread(target=handle_client, args=(conn, addr, currentPlayer, game, game_id)).start()
             currentPlayer += 1
         except Exception as e:
             print(e)

@@ -1,5 +1,6 @@
 from Tile import *
 from enum import Enum
+import pygame as py
 
 
 class Direction(Enum):
@@ -42,7 +43,6 @@ class Player:
             for j in range(num):
                 if index == 1 or tiles[index].x == 780 and tiles[index].y == 522:
                     print(tiles[index])
-                    # game.draw
                     pass
                 if self.direction == Direction.FORWARD:
                     self.currentTile = tiles[index + 1]

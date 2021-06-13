@@ -19,6 +19,18 @@ class Tile(ABC):
         return 'Tile'
 
 
+class StartTile(Tile):
+    def __str__(self):
+        return 'StartTile'
+
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.color = (0, 102, 102)
+
+    def draw(self, screen):
+        super(StartTile, self).draw(screen)
+
+
 class GoldTile(Tile):
     def __str__(self):
         return 'GoldTile'
@@ -89,3 +101,15 @@ class ReverseTile(Tile):
 
     def draw(self, screen):
         super(ReverseTile, self).draw(screen)
+
+
+class EndTile(Tile):
+    def __str__(self):
+        return 'EndTile'
+
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.color = (255, 255, 255)
+
+    def draw(self, screen):
+        super(EndTile, self).draw(screen)
