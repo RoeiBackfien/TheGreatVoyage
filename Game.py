@@ -6,7 +6,6 @@ from Player import Player
 from Cube import Cube
 import time
 import os
-import random
 
 root = os.getcwd() + '\\Pictures\\'
 end = '.png'
@@ -80,8 +79,8 @@ class Game:
         self.cube = Cube(0, 0, (255, 50, 0))
         self.current_player_num = -1
         self.players = [Player(), Player()]
-        self.characters = [Character(220, 400, 'bill', (255, 0, 0)), Character(765, 400, 'dragon', (0, 255, 0)),
-                           Character(1300, 400, 'aatrox', (0, 0, 255))]
+        self.characters = [Character(220, 400, 'red', (255, 0, 0), 30), Character(765, 400, 'green', (0, 255, 0), 40),
+                           Character(1300, 400, 'blue', (0, 0, 255), 50)]
 
     def initialize(self):
         py.init()
@@ -98,9 +97,6 @@ class Game:
             if btn.clicked_on(event):
                 return True, characters[btn.x]
 
-    def main(self, p, p2, num):
-        p.play(self, p2, num)
-
     def move_character(self, character, des_x, des_y, other_character):
         x = character.x
         y = character.y
@@ -116,7 +112,7 @@ class Game:
                 character.y = y
                 self.draw_character(character)
                 self.draw_character(other_character)
-                time.sleep(0.4)
+                time.sleep(0.6)
         elif x_diff == 0:
             while y != des_y:
                 self.draw_field()
@@ -124,7 +120,7 @@ class Game:
                 character.y = y
                 self.draw_character(character)
                 self.draw_character(other_character)
-                time.sleep(0.4)
+                time.sleep(0.6)
         elif y_diff == 0:
             while x != des_x:
                 self.draw_field()
@@ -132,7 +128,7 @@ class Game:
                 character.x = x
                 self.draw_character(character)
                 self.draw_character(other_character)
-                time.sleep(0.4)
+                time.sleep(0.6)
 
     def reset_screen(self):
         self.screen.fill((0, 0, 0))
@@ -224,11 +220,11 @@ class Game:
             else self.players[1]
         text = self.font.render(f"Winner Of Gold Is Player {gold_winner.num}"
                                 f" With {gold_winner.gold} Gold", True, (0, 255, 255))
-        self.screen.blit(text, (200, 20))
+        self.screen.blit(text, (900, 400))
 
         text = self.font.render(f"Winner Of Medals Is Player {medalWinner.num}"
                                 f" With {medalWinner.medals} Medals", True, (0, 255, 255))
-        self.screen.blit(text, (200, 60))
+        self.screen.blit(text, (900, 400))
         py.display.flip()
 
         if gold_winner == self.players[0] and medalWinner == self.players[0]:
@@ -240,5 +236,9 @@ class Game:
         self.reset_screen()
         time.sleep(2)
         text = self.font.render(f"The Winner Is Player Number {winner.num}", True, (0, 255, 255))
-        self.screen.blit(text, (200, 60))
+        self.screen.blit(text, (900, 400))
+        py.display.flip()
+
+        text = self.font.render("Game Is Over", True, (0, 255, 255))
+        self.screen.blit(text, (900, 600))
         py.display.flip()

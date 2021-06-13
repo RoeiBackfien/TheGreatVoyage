@@ -17,8 +17,10 @@ def generate_random_player_turn():
 def generate_random_cube_roll():
     return random.randint(1, 6)
 
+
 def generate_path_num():
     return random.randint(0, 3)
+
 
 def handle_client(conn, addr, player_num, game, game_id):
     global CONNECTIONS
@@ -73,6 +75,8 @@ def handle_client(conn, addr, player_num, game, game_id):
                     else:
                         game.players[1].character = str_data[8:]
                     msg = f'|{player_num} chose {str_data[8:]}|'
+                elif str_data[2:8] == 'finished':
+                    msg = 'finished'
             except:
                 pass
         current_p = game.players[player_num]
@@ -108,7 +112,7 @@ def handle_client(conn, addr, player_num, game, game_id):
             else:
                 if msg == '':
                     msg = 'no'
-            if msg[:5] == '|roll' or msg[3:8] == 'chose' or msg[:9] == 'not drawn':
+            if msg[:5] == '|roll' or msg[3:8] == 'chose' or msg[:9] == 'not drawn' or msg == 'finished':
                 CONNECTIONS[game_id * 2].send(msg.encode())
                 CONNECTIONS[game_id * 2 + 1].send(msg.encode())
             else:

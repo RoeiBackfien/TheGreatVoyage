@@ -19,14 +19,12 @@ class Player:
         self.num = -1
         self.path = None
 
-    def initialize_path(self, path):
-        self.path = path
-
     def update(self):
         if type(self.currentTile) == GoldTile:
             self.gold += 10
         elif type(self.currentTile) == LoseGoldTile:
-            self.gold -= 10
+            if self.gold != 0:
+                self.gold -= 10
         elif type(self.currentTile) == FreezeTile:
             self.direction = Direction.NONE
         elif type(self.currentTile) == MedalTile:
@@ -35,8 +33,12 @@ class Player:
             self.direction = Direction.FORWARD
         elif type(self.currentTile) == ReverseTile:
             self.direction = Direction.BACKWARD
+        elif type(self.currentTile) == EndTile:
+            self.medals += 1
 
     def play(self, game, p2, num):
+        done = False
+        broke = False
         try:
             index = 0
             for i in range(len(self.path)):
@@ -45,16 +47,30 @@ class Player:
                     break
             for j in range(num):
                 if self.direction == Direction.FORWARD:
-                    self.currentTile = self.path[index + 1]
-                    print(self.currentTile)
+                    if index != len(self.path) - 1:
+                        self.currentTile = self.path[index + 1]
+                    else:
+                        done = True
+                        print('done')
+                        break
                     index += 1
                     game.move_character(self.character, self.currentTile.x, self.currentTile.y, p2.character)
                 elif self.direction == Direction.BACKWARD:
-                    self.currentTile = self.path[index - 1]
-                    game.move_character(self.character, self.currentTile.x, self.currentTile.y, p2.character)
+                    if index != 0:
+                        self.currentTile = self.path[index - 1]
+                        index -= 1
+                        game.move_character(self.character, self.currentTile.x, self.currentTile.y, p2.character)
+                    else:
+                        broke = True
+                        break
                 elif self.direction == Direction.NONE:
+                    broke = True
                     break
             self.direction = Direction.FORWARD
+            if not broke:
+                self.update()
+            if done:
+                return True
         except Exception as e:
             print(e)
             pass

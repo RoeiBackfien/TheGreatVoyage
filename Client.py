@@ -75,18 +75,23 @@ def main():
                         game.start_characters()
                         game.disp_player(int(to_do.split('|')[1]))
                     elif "roll cube" in to_do:
-                        num = int(to_do.split('|')[2])
+                        to_do = to_do.split("|roll cube")[1]
+                        num = int(to_do.split('|')[1])
                         game.cube.roll(game, num)
 
-                        p_num = int(to_do.split("|")[3].split("-")[0])
-                        p2_num = int(to_do.split("|")[3].split("-")[1])
+                        p_num = int(to_do.split("|")[2].split("-")[0])
+                        p2_num = int(to_do.split("|")[2].split("-")[1])
 
                         p = game.players[p_num]
                         p2 = game.players[p2_num]
-                        game.main(p, p2, num)
-                        p.update()
+                        done = p.play(game, p2, num)
+                        if done:
+                            net.send_str(f'{ p.num } finished')
 
-                        game.disp_player(int(to_do.split('|')[4]))
+                        game.disp_player(int(to_do.split('|')[3]))
+                    elif 'finished' in to_do:
+                        game.checkWinningPlayer()
+
                     if msg == '':
                         net.send_str('no')
                     else:
