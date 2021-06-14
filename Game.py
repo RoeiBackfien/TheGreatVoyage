@@ -9,6 +9,7 @@ import os
 
 root = os.getcwd() + '\\Pictures\\'
 end = '.png'
+
 start_img = root + 'start' + end
 map_img = root + 'map' + end
 gold_img = root + 'gold' + end
