@@ -67,18 +67,6 @@ class LoseGoldTile(Tile):
         super(LoseGoldTile, self).draw(screen)
 
 
-class AnotherTurnTile(Tile):
-    def __str__(self):
-        return 'AnotherTurnTile'
-
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        self.color = (51, 255, 51)
-
-    def draw(self, screen):
-        super(AnotherTurnTile, self).draw(screen)
-
-
 class FreezeTile(Tile):
     def __str__(self):
         return 'FreezeTile'

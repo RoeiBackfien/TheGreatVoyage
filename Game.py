@@ -45,7 +45,7 @@ class Game:
         self.first_split_1 = [FreezeTile(150, 320), ReverseTile(150, 420), GoldTile(150, 520), LoseGoldTile(250, 522),
                               ReverseTile(360, 522), LoseGoldTile(470, 522)]
 
-        self.first_split_2 = [GoldTile(250, 210), FreezeTile(330, 270), AnotherTurnTile(420, 335),
+        self.first_split_2 = [GoldTile(250, 210), FreezeTile(330, 270), FreezeTile(420, 335),
                               LoseGoldTile(510, 410)]
 
         self.mid_tiles = [GoldTile(570, 522), FreezeTile(680, 522), MedalTile(780, 522)]
