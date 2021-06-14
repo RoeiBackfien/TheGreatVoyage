@@ -29,8 +29,6 @@ class Player:
             self.direction = Direction.NONE
         elif type(self.currentTile) == MedalTile:
             self.medals += 1
-        elif type(self.currentTile) == AnotherTurnTile:
-            self.direction = Direction.FORWARD
         elif type(self.currentTile) == ReverseTile:
             self.direction = Direction.BACKWARD
         elif type(self.currentTile) == EndTile:
