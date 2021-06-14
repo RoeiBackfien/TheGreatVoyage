@@ -87,7 +87,7 @@ def main():
                     if "roll cube" in to_do:
                         to_do = to_do.split("|roll cube")[1]
                         num = int(to_do.split('|')[1])
-                        game.cube.roll(game, 6)
+                        game.cube.roll(game, num)
 
                         p_num = int(to_do.split("|")[2].split("-")[0])
                         p2_num = int(to_do.split("|")[2].split("-")[1])
