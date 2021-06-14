@@ -13,8 +13,12 @@ def clicked(event):
 def main():
     clock = py.time.Clock()
     net = Net()
-    game = net.get_game()
-    game.initialize()
+    try:
+        game = net.get_game()
+        game.initialize()
+    except:
+        print('Server Is Down')
+        return
     my_p = net.send_str_get_obj('get')
     my_num = my_p.num
     print(f'You Are Player Number {my_num}')
@@ -83,7 +87,7 @@ def main():
                     if "roll cube" in to_do:
                         to_do = to_do.split("|roll cube")[1]
                         num = int(to_do.split('|')[1])
-                        game.cube.roll(game, num)
+                        game.cube.roll(game, 6)
 
                         p_num = int(to_do.split("|")[2].split("-")[0])
                         p2_num = int(to_do.split("|")[2].split("-")[1])
@@ -95,11 +99,14 @@ def main():
                             net.send_str(f'{my_num} finished')
 
                         n = int(to_do.split('|')[3])
-                        print(n)
                         game.disp_player(n)
                         game.disp_player_num(my_num, True)
                     elif 'finished' in to_do:
                         game.checkWinningPlayer()
+                        game.reset_screen()
+                        time.sleep(2)
+                        game.print_to_screen('Game Is Over Closing The Game', (250, 400), False)
+                        run = False
                     elif 'Player Disconnected' in to_do:
                         game.reset_screen()
                         game.print_to_screen('Other Player Disconnected, Closing The Game', (250, 400), False)
@@ -111,8 +118,7 @@ def main():
                     else:
                         net.send_str(msg)
                     msg = ''
-                except Exception as e:
-                    print(e)
+                except :
                     run = False
                     break
 

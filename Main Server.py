@@ -90,9 +90,8 @@ def handle_client(conn, addr, player_num, game, game_id):
                     else:
                         game.players[1].character = str_data[8:]
                     msg = f'|{player_num} chose {str_data[8:]}|'
-                elif str_data[2:8] == 'finished':
+                elif 'finished' in str_data:
                     msg = 'finished'
-                    print('finished')
             except:
                 pass
         current_p = game.players[player_num]
@@ -176,8 +175,7 @@ def main():
             print(addr, 'Is Connected To The Server')
             threading.Thread(target=handle_client, args=(conn, addr, currentPlayer, game, game_id)).start()
             currentPlayer += 1
-        except Exception as e:
-            print(e)
+        except:
             break
 
 

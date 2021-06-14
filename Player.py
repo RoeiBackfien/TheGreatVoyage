@@ -47,11 +47,10 @@ class Player:
                     break
             for j in range(num):
                 if self.direction == Direction.FORWARD:
-                    if index != len(self.path) - 1:
+                    try:
                         self.currentTile = self.path[index + 1]
-                    else:
+                    except IndexError:
                         done = True
-                        print('done')
                         break
                     index += 1
                     game.move_character(self, self.currentTile.x, self.currentTile.y, p2.character)
@@ -71,6 +70,5 @@ class Player:
                 self.update()
             if done:
                 return True
-        except Exception as e:
-            print(e)
+        except:
             pass

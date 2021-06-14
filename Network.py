@@ -24,43 +24,17 @@ class Network:
         try:
             self.client.send(data.encode())
             return pickle.loads(self.client.recv(9999))
-        except socket.error as e:
-            print(e)
-
-    def send_str_get_str(self, data):
-        try:
-            self.client.send(data.encode())
-            return self.client.recv(9999)
-        except socket.error as e:
-            print(e)
+        except:
+            pass
 
     def send_str(self, data):
         try:
             self.client.send(data.encode())
-        except socket.error as e:
-            print(e)
+        except:
+            pass
 
     def recv_str(self):
         try:
             return self.client.recv(9999).decode()
-        except socket.error as e:
-            print(e)
-
-    def send_obj_recv_obj(self, data):
-        try:
-            self.client.send(pickle.dumps(data))
-            return pickle.loads(self.client.recv(9999))
-        except socket.error as e:
-            print(e)
-
-    def send_obj(self, data):
-        try:
-            self.client.send(pickle.dumps(data))
-        except socket.error as e:
-            print(e)
-
-    def recv_obj(self):
-        try:
-            return pickle.loads(self.client.recv(9999))
-        except socket.error as e:
-            print(e)
+        except:
+            pass

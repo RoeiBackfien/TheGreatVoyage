@@ -80,8 +80,9 @@ class Game:
         self.cube = Cube(0, 0, (255, 50, 0))
         self.current_player_num = -1
         self.players = [Player(), Player()]
-        self.characters = [Character(220, 400, 'red', (255, 0, 0), 30), Character(765, 400, 'green', (0, 255, 0), 40),
-                           Character(1300, 400, 'blue', (0, 0, 255), 50)]
+        self.characters = [Character(220, 400, 'red', (255, 0, 0), 30, 40),
+                           Character(765, 400, 'green', (0, 255, 0), 40, 50),
+                           Character(1300, 400, 'blue', (0, 0, 255), 50, 30)]
 
     def initialize(self):
         py.init()
@@ -203,7 +204,7 @@ class Game:
     def disp_player(self, num):
         player = self.players[num]
         text = self.small_font.render(f" Turn: Player Number {num}", True, (0, 255, 255))
-        self.screen.blit(text, (700, 40))
+        self.screen.blit(text, (750, 40))
 
         img = py.image.load(gold_img).convert()
         img.set_colorkey((255, 255, 255))
@@ -214,10 +215,10 @@ class Game:
 
         img = py.image.load(medal_img).convert()
         img.set_colorkey((255, 255, 255))
-        self.screen.blit(img, (400, 0))
+        self.screen.blit(img, (450, 0))
 
         text = self.font.render(f" - {player.medals}", True, (0, 255, 255))
-        self.screen.blit(text, (520, 20))
+        self.screen.blit(text, (600, 20))
         py.display.flip()
 
     def draw_field(self):
@@ -253,7 +254,7 @@ class Game:
             else self.players[1]
         text = self.font.render(f"Winner Of Gold Is Player {gold_winner.num}"
                                 f" With {gold_winner.gold} Gold", True, (0, 255, 255))
-        self.screen.blit(text, (900, 400))
+        self.screen.blit(text, (900, 200))
 
         text = self.font.render(f"Winner Of Medals Is Player {medalWinner.num}"
                                 f" With {medalWinner.medals} Medals", True, (0, 255, 255))
@@ -266,12 +267,13 @@ class Game:
             winner = self.players[0]
         else:
             winner = self.players[1]
+        time.sleep(6)
         self.reset_screen()
         time.sleep(2)
         text = self.font.render(f"The Winner Is Player Number {winner.num}", True, (0, 255, 255))
-        self.screen.blit(text, (900, 400))
+        self.screen.blit(text, (900, 600))
         py.display.flip()
 
         text = self.font.render("Game Is Over", True, (0, 255, 255))
-        self.screen.blit(text, (900, 600))
+        self.screen.blit(text, (900, 800))
         py.display.flip()
