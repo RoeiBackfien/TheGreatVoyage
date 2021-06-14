@@ -54,12 +54,12 @@ class Player:
                         print('done')
                         break
                     index += 1
-                    game.move_character(self.character, self.currentTile.x, self.currentTile.y, p2.character)
+                    game.move_character(self, self.currentTile.x, self.currentTile.y, p2.character)
                 elif self.direction == Direction.BACKWARD:
                     if index != 0:
                         self.currentTile = self.path[index - 1]
                         index -= 1
-                        game.move_character(self.character, self.currentTile.x, self.currentTile.y, p2.character)
+                        game.move_character(self, self.currentTile.x, self.currentTile.y, p2.character)
                     else:
                         broke = True
                         break

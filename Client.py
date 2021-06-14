@@ -1,3 +1,5 @@
+import time
+
 import pygame as py
 from Network import Network as Net
 
@@ -14,9 +16,9 @@ def main():
     game = net.get_game()
     game.initialize()
     my_p = net.send_str_get_obj('get')
-    print(f'You Are Player Number {my_p.num}')
+    my_num = my_p.num
+    print(f'You Are Player Number {my_num}')
     run = True
-    cha = ''
     msg = ''
     while run:
         try:
@@ -26,24 +28,23 @@ def main():
                     run = False
                     py.quit()
                 if game.start_button.clicked_on(event):
-                    msg = f"{my_p.num} clicked start button"
+                    msg = f"{my_num} clicked start button"
+                elif game.instructions_button.clicked_on(event):
+                    msg = f"{my_num} clicked instructions button"
+                elif game.return_button.clicked_on(event):
+                    msg = f"{my_num} clicked return button"
                 elif game.cube.clicked_on(event):
-                    msg = f"{my_p.num} clicked on cube"
+                    msg = f"{my_num} clicked on cube"
                 elif clicked(event):
-                    cha = game.choose_character(event)
-                    try:
-                        if cha[0]:
-                            msg = f"{my_p.num} clicked on character"
-                        else:
-                            msg = f"{my_p.num} clicked"
-                    except:
-                        pass
+                    msg = f"{my_num} clicked"
                 try:
                     to_do = net.recv_str()
                     if to_do == 'no':
                         pass
                     if to_do == "waiting for players screen":
                         game.waiting_for_players_screen()
+                    if to_do == 'instructions':
+                        game.instructions_screen(event)
                     if to_do == "main menu":
                         game.main_menu()
                     if to_do == "reset screen choose menu":
@@ -51,8 +52,10 @@ def main():
                         game.choose_menu()
                     if to_do == "choose character":
                         try:
-                            game.players[my_p.num].character = cha[1]
-                            msg = f'{my_p.num} chose {cha[1]}'
+                            c = game.choose_character(event)
+                            game.players[my_num].character = c
+                            if c is not None:
+                                msg = f'{my_num} chose {c}'
                         except:
                             pass
                     elif 'chose' in to_do:
@@ -64,6 +67,7 @@ def main():
                             game.players[1].character = game.get_character_by_name(name)
                     if 'not drawn' in to_do:
                         game.draw_field()
+                        game.disp_player_num(my_num, True)
                         to_do = to_do.split("not drawn")[1]
 
                         num = int(to_do.split('|')[2])
@@ -73,8 +77,10 @@ def main():
                         game.players[1].path = game.paths[num2]
 
                         game.start_characters()
-                        game.disp_player(int(to_do.split('|')[1]))
-                    elif "roll cube" in to_do:
+                        n = int(to_do.split('|')[1])
+                        game.disp_player(n)
+                        game.disp_player_num(my_num, True)
+                    if "roll cube" in to_do:
                         to_do = to_do.split("|roll cube")[1]
                         num = int(to_do.split('|')[1])
                         game.cube.roll(game, num)
@@ -86,11 +92,19 @@ def main():
                         p2 = game.players[p2_num]
                         done = p.play(game, p2, num)
                         if done:
-                            net.send_str(f'{ p.num } finished')
+                            net.send_str(f'{my_num} finished')
 
-                        game.disp_player(int(to_do.split('|')[3]))
+                        n = int(to_do.split('|')[3])
+                        print(n)
+                        game.disp_player(n)
+                        game.disp_player_num(my_num, True)
                     elif 'finished' in to_do:
                         game.checkWinningPlayer()
+                    elif 'Player Disconnected' in to_do:
+                        game.reset_screen()
+                        game.print_to_screen('Other Player Disconnected, Closing The Game', (250, 400), False)
+                        time.sleep(2)
+                        run = False
 
                     if msg == '':
                         net.send_str('no')

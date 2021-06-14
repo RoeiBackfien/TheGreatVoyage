@@ -49,7 +49,7 @@ class MedalTile(Tile):
 
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.color = (255, 250, 100)
+        self.color = (204, 102, 0)
 
     def draw(self, screen):
         super(MedalTile, self).draw(screen)

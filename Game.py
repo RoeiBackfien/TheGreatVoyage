@@ -35,8 +35,9 @@ class Game:
                                    Button(600, 700, 300, 100, (200, 150, 150), 'Choose'),
                                    Button(1150, 700, 300, 100, (200, 150, 150), 'Choose')]
 
-        self.start_button = Button(600, 700, 300, 100, (200, 150, 150), 'Start')
-        self.instructions_button = Button(600, 700, 300, 100, (200, 150, 150), 'Instructions')
+        self.start_button = Button(600, 500, 350, 100, (200, 150, 150), 'Start')
+        self.instructions_button = Button(600, 700, 350, 100, (200, 150, 150), 'Instructions')
+        self.return_button = Button(600, 780, 350, 100, (200, 150, 150), 'Return')
 
         self.start_tiles = [StartTile(50, 210), GoldTile(150, 210)]
 
@@ -86,6 +87,7 @@ class Game:
         py.init()
         py.font.init()
         self.font = pygame.font.SysFont("comicsans", 60)
+        self.small_font = pygame.font.SysFont("comicsans", 40)
         self.screen = py.display.set_mode(self.size)
         py.display.set_caption("Game")
 
@@ -95,11 +97,30 @@ class Game:
                       self.characters_buttons[2].x: self.characters[2]}
         for btn in self.characters_buttons:
             if btn.clicked_on(event):
-                return True, characters[btn.x]
+                return characters[btn.x]
 
-    def move_character(self, character, des_x, des_y, other_character):
-        x = character.x
-        y = character.y
+    def instructions_screen(self, event):
+        self.reset_screen()
+        self.print_to_screen('Welcome To The Great Voyage!', (500, 20), False)
+        self.print_to_screen('In This Game Your Goal is To Reach The Last Tile With Your Character', (20, 120), True)
+        self.print_to_screen('Using The Cube, Clicking On The Cube On Your Turn Moves Your Character.', (20, 180), True)
+        self.print_to_screen('When You Land On A Tile You Get (Or Lose) A Resource.', (20, 260), True)
+        self.print_to_screen('The Blue Tile Is The Starting Point', (20, 320), True)
+        self.print_to_screen('If The Color Of The Tile Is Gold You Earn 10 Gold', (20, 380), True)
+        self.print_to_screen('If The Color Of The Tile Is Red You Lose 10 Gold', (20, 440), True)
+        self.print_to_screen('If The Color Of The Tile Is Cyan You Are Cant Move The Next Turn', (20, 500), True)
+        self.print_to_screen('If The Color Of The Tile Is Green You Will Move Backwards The Next Turn', (20, 560), True)
+        self.print_to_screen('If The Color Of The Tile Is Orange You Will Earn A Medal', (20, 620), True)
+        self.print_to_screen('The White Tile Is The Ending Point And You Earn A Medal', (20, 680), True)
+        self.print_to_screen('The Player With More Resources Wins!', (20, 740), True)
+
+        self.return_button.draw(self.screen)
+        py.display.flip()
+
+    def move_character(self, player, des_x, des_y, other_character):
+        c = player.character
+        x = c.x
+        y = c.y
         y_diff = (des_y - y)
         x_diff = (des_x - x)
 
@@ -108,30 +129,41 @@ class Game:
                 self.draw_field()
                 x += x_diff
                 y += y_diff
-                character.x = x
-                character.y = y
-                self.draw_character(character)
+                c.x = x
+                c.y = y
+                self.draw_character(c)
                 self.draw_character(other_character)
                 time.sleep(0.6)
         elif x_diff == 0:
             while y != des_y:
                 self.draw_field()
                 y += y_diff
-                character.y = y
-                self.draw_character(character)
+                c.y = y
+                self.draw_character(c)
                 self.draw_character(other_character)
                 time.sleep(0.6)
         elif y_diff == 0:
             while x != des_x:
                 self.draw_field()
                 x += x_diff
-                character.x = x
-                self.draw_character(character)
+                c.x = x
+                self.draw_character(c)
                 self.draw_character(other_character)
                 time.sleep(0.6)
 
     def reset_screen(self):
         self.screen.fill((0, 0, 0))
+
+    def print_to_screen(self, msg, loc, small):
+        if small:
+            text = self.small_font.render(msg, True, (0, 255, 255))
+        else:
+            text = self.font.render(msg, True, (0, 255, 255))
+        self.screen.blit(text, loc)
+        py.display.flip()
+
+    def disp_player_num(self, num, small):
+        self.print_to_screen(f'You Are Player Number {num}', (1200, 40), small)
 
     def is_players_connected(self):
         return self.players[0].connected and self.players[1].connected
@@ -170,8 +202,8 @@ class Game:
 
     def disp_player(self, num):
         player = self.players[num]
-        text = self.font.render(f" Player Number {player.num}", True, (0, 255, 255))
-        self.screen.blit(text, (600, 20))
+        text = self.small_font.render(f" Turn: Player Number {num}", True, (0, 255, 255))
+        self.screen.blit(text, (700, 40))
 
         img = py.image.load(gold_img).convert()
         img.set_colorkey((255, 255, 255))
@@ -205,6 +237,7 @@ class Game:
         img = py.image.load(start_img)
         self.screen.blit(img, (0, 0))
         self.start_button.draw(self.screen)
+        self.instructions_button.draw(self.screen)
         py.display.flip()
 
     def waiting_for_players_screen(self):
